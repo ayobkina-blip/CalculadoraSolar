@@ -34,8 +34,9 @@ class LoginRequest extends FormRequest
 
     /*
     Correo Electrónico: test@login.com
-
     Contraseña: password123
+    Correo Electrónico: ayobkina@gmail.com
+    Contraseña: Ayob2025*s
     */
 
     /**
@@ -55,7 +56,7 @@ class LoginRequest extends FormRequest
         // El primer elemento es el nombre de la columna en tu tabla 'usuarios'
         // El segundo elemento es el valor que viene del formulario de login.
         $credentials = [
-            'correo_electronico' => $this->string('email'), // Mapea el input 'email' a la columna 'correo_electronico'
+            'email' => $this->string('email'), // Mapea el input 'email' a la columna 'correo_electronico'
             'password' => $this->string('password'),        // 'password' es manejado por getAuthPassword() en User.php
         ];
         

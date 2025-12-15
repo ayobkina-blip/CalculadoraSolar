@@ -37,7 +37,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'nombre',              // Mapea a la columna 'nombre'
-        'correo_electronico',  // Mapea a la columna 'correo_electronico'
+        'email',  // Mapea a la columna 'email'
         'contrasena_hash',     // Mapea a la columna 'contrasena_hash'
         'rol',                 // Agregamos 'rol' si lo quieres crear masivamente
     ];
