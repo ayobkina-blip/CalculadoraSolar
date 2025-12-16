@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('correo_electronico', 100)->unique();
             $table->tinyInteger('rol')->default(0)->comment('1 para Admin/Editor, 0 para Usuario estándar');
             $table->string('contrasena_hash', 255);
+            $table->rememberToken();
             // Laravel usa created_at y updated_at, aunque no estaban en tu SQL, son buena práctica
             $table->timestamps();
         });
