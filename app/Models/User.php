@@ -9,56 +9,35 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    
     use HasFactory, Notifiable;
 
-    // --- CONEXIÓN CON LA TABLA PERSONALIZADA ---
     
-    /**
-     * El nombre de la tabla asociada al modelo.
-     *
-     * @var string
-     */
+
+
+    // Declarar la tabla a usar
     protected $table = 'usuarios';
 
-    /**
-     * La clave primaria de la tabla.
-     *
-     * @var string
-     */
+    //Declarar la PK de la tabla
     protected $primaryKey = 'id_usuario';
 
-    // --- MANTENER/AJUSTAR ATRIBUTOS ---
 
-    /**
-     * The attributes that are mass assignable (deben coincidir con tus columnas).
-     *
-     * @var list<string>
-     */
+    //Para proteger la asignacion masiva de datos - Los siguientes datos son los unicos que se podran crear
     protected $fillable = [
-        'nombre',              // Mapea a la columna 'nombre'
-        'email',  // Mapea a la columna 'email'
-        'contrasena_hash',     // Mapea a la columna 'contrasena_hash'
-        'rol',                 // Agregamos 'rol' si lo quieres crear masivamente
+        'nombre',
+        'email',
+        'contrasena_hash',
+        'rol',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
+    //Las contraseñas o datos sensibles deben estar en hidden
     protected $hidden = [
-        'contrasena_hash',     // USAMOS 'contrasena_hash' en lugar de 'password'
+        'contrasena_hash',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     * Mantenemos el casteo a 'datetime', pero quitamos el 'password' => 'hashed'
-     * ya que lo manejaremos con getAuthPassword() y la columna no se llama 'password'.
-     *
-     * @return array<string, string>
-     */
+    
+    // No se que hace esta parte
     protected function casts(): array
     {
         return [
@@ -67,13 +46,7 @@ class User extends Authenticatable
         ];
     }
     
-    // --- LÓGICA DE AUTENTICACIÓN ---
-
-    /**
-     * Indica a Laravel qué columna usar para la contraseña.
-     *
-     * @return string
-     */
+    //Esto hace que laravel sepa que 'password' es 'contrasena_hash'
     public function getAuthPassword()
     {
         return $this->contrasena_hash;
