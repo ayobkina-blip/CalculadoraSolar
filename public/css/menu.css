@@ -1,0 +1,59 @@
+body{
+    margin: 0;
+    padding: 0;
+}
+
+.main-header{
+    background-color: #6745eb;
+    padding: 40px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: space-between;
+    align-items: center;
+    
+}
+.logo-img{
+    height: 80px;
+    width: 300px;
+}
+
+
+/* Buscador */
+
+
+.buscador-caja {
+    display: flex;
+    justify-content: center;
+    background-color: white;
+    border: 1px solid #000;
+    width: 100%;
+    max-width: 600px; 
+    height: 45px;
+}
+
+.buscador-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 0 15px;
+    font-size: 16px;
+    color: #666; 
+}
+
+
+.buscador-boton {
+    background-color: #1a1c22; 
+    color: white;
+    border: none;
+    padding: 0 25px;
+    cursor: pointer;
+    font-size: 14px;
+    text-transform: none;
+    border-left: 1px solid #000; 
+}
+
+.buscador-boton:hover {
+    background-color: #333;
+}
