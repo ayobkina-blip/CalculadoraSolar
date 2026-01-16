@@ -20,11 +20,9 @@ function changeImage() {
 
     setTimeout(() => {
         capaSuperior.style.backgroundImage = `url('${images[nextIndex]}')`;
-        
         capaSuperior.classList.remove('fade-out');
-        
         currentIndex = nextIndex;
-    }, 1200);
+    }, 1500);
 }
 
-setInterval(changeImage, 3000);
+setInterval(changeImage, 4000);
