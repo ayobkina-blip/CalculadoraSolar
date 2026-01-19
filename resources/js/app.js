@@ -1,4 +1,5 @@
 import './bootstrap';
+import '../../public/css/login-registro.css';
 
 import Alpine from 'alpinejs';
 

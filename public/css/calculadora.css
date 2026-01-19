@@ -1,97 +1,50 @@
 /* public/css/calculadora.css */
-:root {
-    --solar-primary: #f59e0b;
-    --solar-dark: #0f172a;
-    --solar-border: #e2e8f0;
+
+/* Limpiar selectores de número */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
-.solar-card {
-    background: #ffffff;
-    border: 1px solid var(--solar-border);
-    border-radius: 2rem;
-    /* Sombra de múltiples capas para profundidad real */
-    box-shadow: 
-        0 10px 1px -4px rgba(0,0,0,0.01),
-        0 20px 25px -5px rgba(0,0,0,0.05),
-        0 25px 50px -12px rgba(0,0,0,0.1);
-    position: relative;
-    overflow: hidden;
+input[type=number] {
+    -moz-appearance: textfield;
 }
 
-/* El label ahora tiene un estilo de "etiqueta técnica" */
+.font-mono {
+    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+}
+
+/* --- Nuevos Estilos Personalizados --- */
+
 .solar-label {
-    display: inline-block;
-    background: #f8fafc;
-    padding: 2px 10px;
-    border-radius: 6px;
-    border: 1px solid var(--solar-border);
-    font-size: 0.65rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: #475569;
-    margin-bottom: 0.8rem;
+    @apply block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-200;
 }
 
 .solar-input {
-    appearance: none;
-    background: #ffffff;
-    border: 2px solid var(--solar-border);
-    border-radius: 1rem;
-    color: var(--solar-dark);
-    font-family: 'JetBrains Mono', monospace; /* Si tienes una fuente mono, queda genial */
-    font-size: 1.1rem;
-    font-weight: 600;
-    padding: 1.2rem;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    width: 100%;
+    @apply w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 
+           focus:border-amber-500 dark:focus:border-amber-400 focus:ring-amber-500 
+           dark:focus:ring-amber-400 rounded-lg shadow-sm transition-all duration-200;
 }
 
-/* Efecto de "encendido" al entrar en el input */
-.solar-input:focus {
-    border-color: var(--solar-primary);
-    box-shadow: 0 0 0 5px rgba(245, 158, 11, 0.15);
-    outline: none;
-    transform: scale(1.01);
-}
-
-.group:focus-within .solar-label {
-    background: var(--solar-primary);
-    color: white;
-    border-color: var(--solar-primary);
-}
-
-/* Botón con efecto de profundidad táctil */
 .solar-btn {
-    background: var(--solar-dark);
-    color: white;
-    padding: 1.5rem;
-    border-radius: 1.2rem;
-    font-weight: 900;
-    font-size: 1rem;
-    letter-spacing: 2px;
-    border: none;
-    cursor: pointer;
-    position: relative;
-    transition: all 0.2s;
-    box-shadow: 0 8px 0px #000; /* Sombra sólida para efecto 3D */
+    @apply inline-flex justify-center items-center px-6 py-3 bg-amber-600 border border-transparent 
+           rounded-lg font-semibold text-white uppercase tracking-widest hover:bg-amber-700 
+           active:bg-amber-800 focus:outline-none focus:ring-2 focus:ring-amber-500 
+           focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-all duration-150;
 }
 
-.solar-btn:hover {
-    transform: translateY(2px);
-    box-shadow: 0 5px 0px #000;
-    background: #1e293b;
+/* Efecto de elevación al enfocar */
+.group:focus-within .solar-label {
+    @apply text-amber-600 dark:text-amber-400;
 }
 
-.solar-btn:active {
-    transform: translateY(8px);
-    box-shadow: 0 0px 0px #000;
+input:focus {
+    transform: translateY(-1px);
 }
 
-/* Input readonly para que parezca un panel LCD */
-.solar-input[readonly] {
-    background: #f1f5f9;
-    border-style: dashed;
-    color: #64748b;
+/* Animación de carga para el botón */
+.btn-loading {
     cursor: not-allowed;
+    opacity: 0.7;
 }

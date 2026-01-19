@@ -9,28 +9,32 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('resultados', function (Blueprint $table) {
-            $table->id('id_resultado'); // INT NOT NULL AUTO_INCREMENT
-            $table->decimal('ahorro_estimado_eur', 10, 2)->nullable();
-            $table->integer('fuerza')->nullable();
+            $table->id('id_resultado');
             $table->string('ubicacion', 100)->nullable();
             $table->integer('consumo_anual')->nullable();
-            $table->integer('radiacion_a_medida')->nullable();
             
-            // Claves Foráneas
-            // Laravel usa bigIncrements para IDs, por eso usamos bigInteger
+            // Campos técnicos para el cálculo real
+            $table->decimal('superficie_disponible', 10, 2)->nullable();
+            $table->integer('orientacion')->default(0);
+            $table->integer('inclinacion')->default(30);
+            
+            // Resultados del cálculo
+            $table->decimal('ahorro_estimado_eur', 10, 2)->nullable();
+            $table->integer('paneles_sugeridos')->nullable();
+            $table->float('potencia_instalacion_kwp')->nullable();
+            $table->float('produccion_anual_kwh')->nullable();
+            $table->decimal('roi_anyos', 5, 2)->nullable();
+            
+            $table->integer('radiacion_a_medida')->nullable();
+            $table->integer('fuerza')->nullable();
+
+            // Relaciones
             $table->bigInteger('usuario_fr')->unsigned()->nullable();
             $table->bigInteger('estadistica_fr')->unsigned()->nullable();
-            
-            $table->timestamps(); // Recomendado
+            $table->timestamps();
 
-            // Definición de las Constraints
-            $table->foreign('usuario_fr', 'fk_resultados_usuarios')
-                  ->references('id_usuario')->on('usuarios')
-                  ->onDelete('SET NULL');
-            
-            $table->foreign('estadistica_fr', 'fk_resultados_estadisticas')
-                  ->references('id_estadistica')->on('estadisticas')
-                  ->onDelete('SET NULL');
+            $table->foreign('usuario_fr')->references('id_usuario')->on('usuarios')->onDelete('cascade');
+            $table->foreign('estadistica_fr')->references('id_estadistica')->on('estadisticas')->onDelete('cascade');
         });
     }
 
