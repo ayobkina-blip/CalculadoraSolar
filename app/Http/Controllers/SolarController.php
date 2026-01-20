@@ -5,12 +5,31 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Resultado;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class SolarController extends Controller
 {
     /**
      * Procesa los datos del formulario de la calculadora solar.
      */
+    public function descargarPDF($id)
+{
+    $resultado = Resultado::where('id_resultado', $id)
+        ->where('usuario_fr', Auth::id())
+        ->firstOrFail();
+
+    // DEPURACIÓN RÁPIDA: Si esto es 0 aquí, el problema es la base de datos
+    $roi = $resultado->roi_anyos > 0 ? $resultado->roi_anyos : 'No calculado';
+
+    $data = [
+        'resultado' => $resultado,
+        'roi' => $roi, // Enviamos el ROI como una variable independiente y limpia
+        'fecha' => date('d/m/Y'),
+    ];
+
+    $pdf = Pdf::loadView('solarcalc.pdf', $data);
+    return $pdf->download('Presupuesto_SOLARCALC_'.$id.'.pdf');
+}
     public function dashboard()
 {
     $user = auth()->user();
@@ -109,7 +128,13 @@ class SolarController extends Controller
         $ahorroAnualEur = $produccionAnualKwh * $precioKwhMedio;
         
         $costeTotalProyecto = $costeFijoInstalacion + ($panelesFinales * $costeVariablePorPanel);
-        $roiAnyos = ($ahorroAnualEur > 0) ? ($costeTotalProyecto / $ahorroAnualEur) : 0;
+
+        // Evitamos división por cero y aseguramos un mínimo de 0.1 para que no sea invisible
+        if ($ahorroAnualEur > 0) {
+            $roiAnyos = round($costeTotalProyecto / $ahorroAnualEur, 1);
+        } else {
+            $roiAnyos = 0; // O un valor estimado base
+        }
 
         // 5. Almacenamiento en la base de datos
         $resultado = Resultado::create([
@@ -123,7 +148,7 @@ class SolarController extends Controller
             'paneles_sugeridos' => $panelesFinales,
             'potencia_instalacion_kwp' => $potenciaInstaladaKwp,
             'produccion_anual_kwh' => $produccionAnualKwh,
-            'roi_anyos' => round($roiAnyos, 2),
+            'roi_anyos' => $roiAnyos,
             // 'fuerza' y 'radiacion_a_medida' pueden usarse para otros indicadores
         ]);
 

@@ -1,6 +1,4 @@
 <x-app-layout>
-    {{-- Eliminamos el link al CSS externo porque ahora todo es Tailwind puro --}}
-    
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-3">
             <svg class="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -38,7 +36,6 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-                            {{-- Bucle para registros de la base de datos --}}
                             @forelse($presupuestos as $item)
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition">
                                 <td class="px-8 py-4 font-mono text-xs text-gray-400">#{{ $item->id_resultado }}</td>
@@ -46,11 +43,24 @@
                                 <td class="px-8 py-4 text-sm text-gray-600 dark:text-gray-300">{{ number_format($item->potencia_instalacion_kwp, 2) }} kWp</td>
                                 <td class="px-8 py-4 text-sm font-bold text-green-600">{{ number_format($item->ahorro_estimado_eur, 2) }} €/año</td>
                                 <td class="px-8 py-4 text-sm text-gray-500">{{ $item->roi_anyos }} años</td>
-                                <td class="px-8 py-4 text-right text-xs">
-                                    <a href="{{ route('solar.resultados', ['id' => $item->id_resultado]) }}" 
-                                       class="text-amber-600 hover:text-amber-700 font-bold uppercase tracking-tighter">
-                                        Detalles
-                                    </a>
+                                <td class="px-8 py-4 text-right">
+                                    <div class="flex items-center justify-end gap-3">
+                                        {{-- Enlace a Detalles --}}
+                                        <a href="{{ route('solar.resultados', ['id' => $item->id_resultado]) }}" 
+                                           class="text-amber-600 hover:text-amber-700 font-bold uppercase tracking-tighter transition text-[11px]">
+                                            Detalles
+                                        </a>
+
+                                        {{-- Botón PDF --}}
+                                        <a href="{{ route('solar.pdf', $item->id_resultado) }}" 
+                                           title="Descargar PDF"
+                                           class="p-1.5 text-gray-500 hover:text-red-600 dark:hover:text-red-400 transition-colors bg-gray-100 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9h1m1 0h1m-2 4h1m1 0h1m-2 4h1m1 0h1"></path>
+                                            </svg>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                             @empty

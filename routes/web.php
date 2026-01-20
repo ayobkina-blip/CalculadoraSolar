@@ -44,6 +44,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [SolarController::class, 'dashboard'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
+
+    Route::get('/solar/descargar-pdf/{id}', [SolarController::class, 'descargarPDF'])
+    ->name('solar.pdf')
+    ->middleware('auth');
 });
 
 require __DIR__.'/auth.php';
