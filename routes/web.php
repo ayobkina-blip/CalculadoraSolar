@@ -38,6 +38,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/estadisticas', function () {
         return view('solarcalc.estadisticas');
     })->name('solar.estadisticas');
+    // Elimina la versión simple y deja solo esta:
+    Route::get('/estadisticas', [SolarController::class, 'estadisticas'])->name('solar.estadisticas');
+
+    Route::get('/dashboard', [SolarController::class, 'dashboard'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 });
 
 require __DIR__.'/auth.php';

@@ -11,6 +11,54 @@ class SolarController extends Controller
     /**
      * Procesa los datos del formulario de la calculadora solar.
      */
+    public function dashboard()
+{
+    $user = auth()->user();
+    // Obtenemos los últimos 3 presupuestos para una tabla rápida
+    $ultimosPresupuestos = \App\Models\Resultado::where('usuario_fr', $user->id_usuario)
+        ->latest()
+        ->take(3)
+        ->get();
+
+    // Datos para los contadores
+    $presupuestos = \App\Models\Resultado::where('usuario_fr', $user->id_usuario)->get();
+    $totalKwh = $presupuestos->sum('produccion_anual_kwh');
+    
+    // Simulación de curva para el mini-gráfico
+    $curva = [0.05, 0.06, 0.09, 0.11, 0.13, 0.14, 0.14, 0.12, 0.09, 0.07, 0.05, 0.05];
+    $datosGrafico = [];
+    foreach ($curva as $mes) { $datosGrafico[] = round($totalKwh * $mes, 2); }
+
+    return view('dashboard', [
+        'presupuestos' => $ultimosPresupuestos,
+        'conteo' => $presupuestos->count(),
+        'ahorroTotal' => $presupuestos->sum('ahorro_estimado_eur'),
+        'datosGrafico' => $datosGrafico
+    ]);
+}
+    public function estadisticas()
+{
+    // Obtener el usuario y sus presupuestos guardados
+    $user = auth()->user();
+    $presupuestos = \App\Models\Resultado::where('usuario_fr', $user->id_usuario)->get();
+
+    $produccionTotalKwh = $presupuestos->sum('produccion_anual_kwh');
+    
+    // Simulación de curva de radiación mensual para Algemesí
+    $curvaValencia = [0.05, 0.06, 0.09, 0.11, 0.13, 0.14, 0.14, 0.12, 0.09, 0.07, 0.05, 0.05];
+    $datosMensuales = [];
+
+    foreach ($curvaValencia as $mes) {
+        $datosMensuales[] = round($produccionTotalKwh * $mes, 2);
+    }
+
+    return view('solarcalc.estadisticas', [
+        'radiacion' => 1650,
+        'usuarios' => \App\Models\User::count(),
+        'co2' => round(($produccionTotalKwh * 0.25) / 1000, 2),
+        'datosGrafico' => $datosMensuales // Esta es la variable que espera el JS
+    ]);
+}
     public function procesar(Request $request)
     {
         // 1. Validación de los datos de entrada

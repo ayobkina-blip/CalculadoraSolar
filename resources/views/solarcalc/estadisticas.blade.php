@@ -1,30 +1,74 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-3">
+            <svg class="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
             {{ __('Estadísticas de Energía') }}
         </h2>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm">
-                    <p class="text-xs font-bold text-gray-400 uppercase">Radiación Media</p>
-                    <p class="text-2xl font-bold mt-2 dark:text-white">1,650 kWh/m²</p>
+            {{-- Indicadores --}}
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-xl">
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Radiación Media</p>
+                    <p class="text-3xl font-bold mt-2 dark:text-white text-center">{{ $radiacion ?? '1650' }} <span class="text-sm font-normal text-gray-400">kWh/m²</span></p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm">
-                    <p class="text-xs font-bold text-gray-400 uppercase">Usuarios en Algemesí</p>
-                    <p class="text-2xl font-bold mt-2 dark:text-white">124 perfiles</p>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-xl">
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Comunidad Solar</p>
+                    <p class="text-3xl font-bold mt-2 dark:text-white text-center">{{ $usuarios ?? '0' }} <span class="text-sm font-normal text-gray-400">perfiles</span></p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm">
-                    <p class="text-xs font-bold text-gray-400 uppercase">CO2 Evitado</p>
-                    <p class="text-2xl font-bold mt-2 text-green-600">12.4 Toneladas</p>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-xl">
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">CO2 Evitado</p>
+                    <p class="text-3xl font-bold mt-2 text-green-600 text-center">{{ $co2 ?? '0' }} <span class="text-sm font-normal text-gray-400">Tons</span></p>
                 </div>
             </div>
             
-            <div class="mt-8 bg-white dark:bg-gray-800 p-10 rounded-xl border border-gray-100 dark:border-gray-700 h-64 flex items-center justify-center italic text-gray-400">
-                Visualización de curva de generación mensual (Simulación Chart.js)
+            {{-- El Gráfico --}}
+            <div class="bg-white dark:bg-gray-800 p-8 rounded-xl border border-gray-200 dark:border-gray-700 shadow-xl">
+                <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6">Producción Mensual Estimada (kWh)</h3>
+                <div class="h-80 w-full">
+                    <canvas id="solarChart"></canvas>
+                </div>
             </div>
         </div>
     </div>
+
+    {{-- Script para cargar el gráfico --}}
+    @push('js')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('solarChart').getContext('2d');
+            
+            // Si el controlador no envía datos, usamos unos por defecto para que no se vea vacío
+            const datosFalsos = [10, 15, 25, 45, 60, 80, 85, 70, 50, 30, 15, 10];
+            const datosReales = @json($datosGrafico ?? []);
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                    datasets: [{
+                        label: 'Producción (kWh)',
+                        data: datosReales.length > 0 ? datosReales : datosFalsos,
+                        borderColor: '#f59e0b',
+                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } }
+                }
+            });
+        });
+    </script>
+    @endpush
 </x-app-layout>
