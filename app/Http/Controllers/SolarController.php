@@ -12,6 +12,32 @@ class SolarController extends Controller
     /**
      * Procesa los datos del formulario de la calculadora solar.
      */
+    public function adminIndex()
+{
+    if (auth()->user()->rol != 1) {
+        abort(403);
+    }
+
+    // El with('usuario') ahora funcionará porque lo definimos arriba
+    $todosLosPresupuestos = \App\Models\Resultado::with('usuario')->latest()->get();
+    
+    return view('solarcalc.admin', compact('todosLosPresupuestos'));
+}
+
+    /**
+     * Cambiar el estado de un presupuesto para afectar a las gráficas globales
+     */
+    public function cambiarEstado(Request $request, $id)
+    {
+        // Verificamos si el rol es 1 (Admin)
+        if (auth()->user()->rol != 1) abort(403);
+
+        $resultado = Resultado::findOrFail($id);
+        $resultado->estado = $request->nuevo_estado; // Asegúrate de tener esta columna en resultados
+        $resultado->save();
+
+        return back()->with('success', 'El estado ha sido actualizado. Las estadísticas globales han cambiado.');
+    }
     public function descargarPDF($id)
 {
     $resultado = Resultado::where('id_resultado', $id)
@@ -19,13 +45,14 @@ class SolarController extends Controller
         ->firstOrFail();
 
     // DEPURACIÓN RÁPIDA: Si esto es 0 aquí, el problema es la base de datos
-    $roi = $resultado->roi_anyos > 0 ? $resultado->roi_anyos : 'No calculado';
+    // Esto está bien: evita errores si el ROI es 0 o negativo
+        $roi = $resultado->roi_anyos > 0 ? $resultado->roi_anyos : 'No calculado';
 
-    $data = [
-        'resultado' => $resultado,
-        'roi' => $roi, // Enviamos el ROI como una variable independiente y limpia
-        'fecha' => date('d/m/Y'),
-    ];
+        $data = [
+            'resultado' => $resultado,
+            'roi' => $roi, // IMPORTANTE: Usa $roi en la vista PDF, no $resultado->roi_anyos
+            'fecha' => date('d/m/Y'),
+        ];
 
     $pdf = Pdf::loadView('solarcalc.pdf', $data);
     return $pdf->download('Presupuesto_SOLARCALC_'.$id.'.pdf');
@@ -33,50 +60,71 @@ class SolarController extends Controller
     public function dashboard()
 {
     $user = auth()->user();
-    // Obtenemos los últimos 3 presupuestos para una tabla rápida
-    $ultimosPresupuestos = \App\Models\Resultado::where('usuario_fr', $user->id_usuario)
-        ->latest()
-        ->take(3)
-        ->get();
-
-    // Datos para los contadores
-    $presupuestos = \App\Models\Resultado::where('usuario_fr', $user->id_usuario)->get();
-    $totalKwh = $presupuestos->sum('produccion_anual_kwh');
     
-    // Simulación de curva para el mini-gráfico
+    // 1. Obtenemos todos los presupuestos para cálculos globales
+    $presupuestos = \App\Models\Resultado::where('usuario_fr', $user->id_usuario)->get();
+    $conteo = $presupuestos->count();
+    $ahorroTotal = $presupuestos->sum('ahorro_estimado_eur');
+    $totalKwh = $presupuestos->sum('produccion_anual_kwh');
+
+    // 2. Métricas de Impacto Ambiental (Cálculos técnicos)
+    $co2Evitado = round(($totalKwh * 0.25) / 1000, 2); // 0.25kg CO2 por kWh
+    $arbolesEquivalentes = floor($totalKwh * 0.04); // Aprox 1 árbol por cada 25kWh anuales
+
+    // 3. Obtener los últimos 3 para la lista rápida
+    $ultimosPresupuestos = $presupuestos->sortByDesc('created_at')->take(3);
+
+    // 4. Datos para el gráfico de barras (Rendimiento Mensual)
     $curva = [0.05, 0.06, 0.09, 0.11, 0.13, 0.14, 0.14, 0.12, 0.09, 0.07, 0.05, 0.05];
     $datosGrafico = [];
-    foreach ($curva as $mes) { $datosGrafico[] = round($totalKwh * $mes, 2); }
+    foreach ($curva as $mes) { 
+        $datosGrafico[] = round($totalKwh * $mes, 2); 
+    }
+
+    // 5. Datos para el gráfico de Donut (Desglose del último presupuesto)
+    $ultimo = $presupuestos->last();
+    $repartoCostes = [];
+    if ($ultimo) {
+        $costePaneles = $ultimo->paneles_sugeridos * 250; // Coste variable definido en lógica
+        $costeBase = 1500; // Coste fijo de instalación e inversor
+        $repartoCostes = [$costePaneles, $costeBase];
+    }
 
     return view('dashboard', [
         'presupuestos' => $ultimosPresupuestos,
-        'conteo' => $presupuestos->count(),
-        'ahorroTotal' => $presupuestos->sum('ahorro_estimado_eur'),
-        'datosGrafico' => $datosGrafico
+        'conteo' => $conteo,
+        'ahorroTotal' => $ahorroTotal,
+        'co2' => $co2Evitado,
+        'arboles' => $arbolesEquivalentes,
+        'datosGrafico' => $datosGrafico,
+        'repartoCostes' => $repartoCostes,
+        'ultimo' => $ultimo
     ]);
 }
-    public function estadisticas()
+public function estadisticas()
 {
-    // Obtener el usuario y sus presupuestos guardados
     $user = auth()->user();
-    $presupuestos = \App\Models\Resultado::where('usuario_fr', $user->id_usuario)->get();
-
-    $produccionTotalKwh = $presupuestos->sum('produccion_anual_kwh');
     
-    // Simulación de curva de radiación mensual para Algemesí
-    $curvaValencia = [0.05, 0.06, 0.09, 0.11, 0.13, 0.14, 0.14, 0.12, 0.09, 0.07, 0.05, 0.05];
-    $datosMensuales = [];
+    // FILTRADO PROFESIONAL: Solo sumamos datos reales verificados por admin
+    $presupuestosVerificados = \App\Models\Resultado::where('estado', 'verificado')->get();
 
-    foreach ($curvaValencia as $mes) {
-        $datosMensuales[] = round($produccionTotalKwh * $mes, 2);
-    }
+    $produccionTotalKwh = $presupuestosVerificados->sum('produccion_anual_kwh');
+    
+    // Si no hay verificados, podrías mostrar un mensaje o usar una media base
+    $usuariosContados = \App\Models\User::count();
 
     return view('solarcalc.estadisticas', [
         'radiacion' => 1650,
-        'usuarios' => \App\Models\User::count(),
+        'usuarios' => $usuariosContados,
         'co2' => round(($produccionTotalKwh * 0.25) / 1000, 2),
-        'datosGrafico' => $datosMensuales // Esta es la variable que espera el JS
+        'datosGrafico' => $this->calcularCurvaMensual($produccionTotalKwh)
     ]);
+}
+
+// Función auxiliar para no repetir código
+private function calcularCurvaMensual($total) {
+    $curvaValencia = [0.05, 0.06, 0.09, 0.11, 0.13, 0.14, 0.14, 0.12, 0.09, 0.07, 0.05, 0.05];
+    return array_map(fn($mes) => round($total * $mes, 2), $curvaValencia);
 }
     public function procesar(Request $request)
     {

@@ -12,6 +12,7 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+
 Route::middleware('auth')->group(function () {
     // Perfil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -48,6 +49,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/solar/descargar-pdf/{id}', [SolarController::class, 'descargarPDF'])
     ->name('solar.pdf')
     ->middleware('auth');
+    // Panel de Administración
+    Route::get('/admin/gestion', [SolarController::class, 'adminIndex'])->name('solar.admin');
+    
+    // Ruta para cambiar el estado (la necesitaremos para que el botón funcione)
+    Route::post('/admin/resultado/{id}/estado', [SolarController::class, 'cambiarEstado'])->name('admin.cambiarEstado');
 });
 
 require __DIR__.'/auth.php';

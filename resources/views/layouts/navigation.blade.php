@@ -24,6 +24,12 @@
                     <x-nav-link :href="route('solar.estadisticas')" :active="request()->routeIs('solar.estadisticas')">
                         {{ __('Estadísticas') }}
                     </x-nav-link>
+                    {{-- En tu archivo de navegación --}}
+                    @if(Auth::user()->rol == 1) 
+                        <x-nav-link :href="route('solar.admin')" :active="request()->routeIs('solar.admin')" class="text-red-500 font-bold">
+                            {{ __('Panel Admin') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 

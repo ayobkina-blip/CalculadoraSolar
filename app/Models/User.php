@@ -51,4 +51,10 @@ class User extends Authenticatable
     {
         return $this->contrasena_hash;
     }
+    // En app/Models/User.php
+
+    public function resultados()
+    {
+        return $this->hasMany(\App\Models\Resultado::class, 'usuario_fr', 'id_usuario');
+    }
 }
