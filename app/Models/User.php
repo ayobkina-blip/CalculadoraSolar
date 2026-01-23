@@ -57,4 +57,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(\App\Models\Resultado::class, 'usuario_fr', 'id_usuario');
     }
+// app/Models/User.php
+public function presupuestos()
+{
+    // 'usuario_fr' es el nombre real de tu columna en la tabla 'resultados'
+    return $this->hasMany(\App\Models\Resultado::class, 'usuario_fr', 'id_usuario');
+}
+public function getEsAdminAttribute()
+{
+    return (int) $this->rol === 1; //
+}
 }

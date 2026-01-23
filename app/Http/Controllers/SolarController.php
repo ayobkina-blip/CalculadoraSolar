@@ -12,16 +12,24 @@ class SolarController extends Controller
     /**
      * Procesa los datos del formulario de la calculadora solar.
      */
-    public function adminIndex()
+// app/Http/Controllers/SolarController.php
+
+public function adminIndex()
 {
+    // Verificación de seguridad (Rol 1 = Admin)
     if (auth()->user()->rol != 1) {
         abort(403);
     }
 
-    // El with('usuario') ahora funcionará porque lo definimos arriba
+    // 1. Obtenemos todos los presupuestos con su relación de usuario
     $todosLosPresupuestos = \App\Models\Resultado::with('usuario')->latest()->get();
     
-    return view('solarcalc.admin', compact('todosLosPresupuestos'));
+    // 2. ¡ESTO ES LO QUE FALTA!: Obtenemos todos los usuarios del sistema
+    // Nota: Asegúrate de usar el modelo correcto (User o Usuario según tu proyecto)
+    $usuarios = \App\Models\User::all(); 
+
+    // 3. Enviamos ambas variables a la vista
+    return view('solarcalc.admin', compact('todosLosPresupuestos', 'usuarios'));
 }
 
     /**

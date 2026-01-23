@@ -15,6 +15,13 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            colors: {
+                // Puedes definir tus grises oscuros personalizados aquí
+                dark: {
+                    bg: '#0f172a',
+                    card: '#1e293b'
+                }
+            },
         },
     },
 

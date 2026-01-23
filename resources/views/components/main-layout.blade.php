@@ -1,42 +1,70 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" 
+      x-data="{ darkMode: localStorage.getItem('theme') === 'dark' }" 
+      x-init="$watch('darkMode', val => localStorage.setItem('theme', val ? 'dark' : 'light'))"
+      :class="{ 'dark': darkMode }">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SolarCalc</title>
+    <title>SolarCalc | Energía Inteligente</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style> 
+        [x-cloak] { display: none !important; } 
+    </style>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 antialiased font-sans">
-    <div class="min-h-screen">
-        <nav class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16 items-center">
-            <div class="flex items-center text-xl font-bold dark:text-white">
-                <a href="/"><span class="text-yellow-500">Solar</span>Calc</a>
-            </div>
-
-            <div class="flex items-center space-x-8">
-                @auth
-                    <a href="{{ url('/dashboard') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-yellow-500 transition">Dashboard</a>
-                @else
-                    <a href="{{ route('login') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-yellow-500 transition">
-                        Iniciar sesión
-                    </a>
+<body class="bg-white dark:bg-[#0f172a] antialiased font-sans transition-colors duration-300">
+    
+    <div class="min-h-screen flex flex-col">
+        
+        <nav class="w-full bg-white dark:bg-[#0f172a] border-b border-gray-100 dark:border-slate-800">
+            <div class="max-w-7xl mx-auto px-6 lg:px-8">
+                <div class="flex justify-between h-20 items-center">
                     
-                    <a href="{{ route('register') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-yellow-500 transition">
-                        Crear cuenta
+                    {{-- Logo --}}
+                    <a href="/" class="flex items-center gap-3 group">
+                        <div class="bg-amber-500 p-2 rounded-xl shadow-lg group-hover:rotate-12 transition-transform duration-300">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-11.314l.707.707m11.314 11.314l.707.707M12 8a4 4 0 100 8 4 4 0 000-8z"></path>
+                            </svg>
+                        </div>
+                        <span class="text-xl font-black tracking-tighter text-gray-900 dark:text-white uppercase">
+                            Solar<span class="text-amber-500">Calc</span>
+                        </span>
                     </a>
-                @endif
-            </div>
-        </div>
-    </div>
-</nav>
 
-        <main class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                    {{-- Derecha: Navegación y Switch --}}
+                    <div class="flex items-center gap-6">
+                        
+                        <button @click="darkMode = !darkMode" 
+                                class="p-2.5 rounded-xl bg-gray-50 dark:bg-slate-800 text-gray-400 dark:text-amber-400 border border-gray-200 dark:border-slate-700 hover:bg-gray-100 dark:hover:bg-slate-700 transition-all">
+                            <svg x-show="!darkMode" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                            <svg x-show="darkMode" x-cloak class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-11.314l.707.707m11.314 11.314l.707.707M12 8a4 4 0 100 8 4 4 0 000-8z"></path></svg>
+                        </button>
+
+                        <div class="hidden md:flex items-center gap-6">
+                            @auth
+                                <a href="{{ url('/dashboard') }}" class="text-[11px] font-black uppercase tracking-widest text-gray-500 hover:text-amber-500 transition-colors">Dashboard</a>
+                                <a href="{{ url('/profile') }}" class="text-[11px] font-black uppercase tracking-widest text-gray-500 hover:text-amber-500 transition-colors">Mi Perfil</a>
+                            @else
+                                <a href="{{ route('login') }}" class="text-[11px] font-black uppercase tracking-widest text-gray-500 hover:text-amber-500 transition-colors">Entrar</a>
+                                <a href="{{ route('register') }}" class="bg-gray-900 dark:bg-amber-500 text-white px-6 py-2.5 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-amber-600 transition-all shadow-lg shadow-gray-200 dark:shadow-none">
+                                    Empezar
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <main class="flex-grow py-12">
+            <div class="max-w-7xl mx-auto px-6 lg:px-8">
                 {{ $slot }}
             </div>
         </main>
+        
+        <x-toast />
     </div>
+
 </body>
 </html>
