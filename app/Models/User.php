@@ -2,69 +2,103 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    
     use HasFactory, Notifiable;
 
-    
-
-
-    // Declarar la tabla a usar
+    /**
+     * CONEXIÓN A BASE DE DATOS
+     * Definimos la tabla y la clave primaria personalizada para que Laravel
+     * no busque por defecto 'users' e 'id'.
+     */
     protected $table = 'usuarios';
-
-    //Declarar la PK de la tabla
     protected $primaryKey = 'id_usuario';
 
-
-    //Para proteger la asignacion masiva de datos - Los siguientes datos son los unicos que se podran crear
+    /**
+     * ASIGNACIÓN MASIVA
+     * Define qué campos se pueden llenar usando User::create([...])
+     */
     protected $fillable = [
-        'nombre',
+        'nombre', 
         'email',
         'contrasena_hash',
+        'avatar',
         'rol',
     ];
 
-    //Las contraseñas o datos sensibles deben estar en hidden
+    /**
+     * ATRIBUTOS OCULTOS
+     * Estos campos no se incluirán cuando el modelo se convierta a Array o JSON
+     * (por ejemplo, en una API), protegiendo datos sensibles.
+     */
     protected $hidden = [
         'contrasena_hash',
         'remember_token',
     ];
 
-    
-    // No se que hace esta parte
+    /**
+     * CASTING DE ATRIBUTOS
+     * Esta función (introducida en Laravel 11) transforma los datos al leerlos o escribirlos.
+     * Por ejemplo, convierte un string '2023-01-01' en un objeto Carbon (Fecha) automáticamente.
+     */
     protected function casts(): array
     {
         return [
-            // No tienes esta columna, pero si la tuvieras, sería 'datetime'.
-            // 'email_verified_at' => 'datetime', 
+            'email_verified_at' => 'datetime',
+            'contrasena_hash' => 'hashed', // Laravel aplicará hashing automáticamente si es necesario
+            'rol' => 'integer',
         ];
     }
-    
-    //Esto hace que laravel sepa que 'password' es 'contrasena_hash'
+
+    /**
+     * SOBREESCRITURA DE PASSWORD
+     * Como tu columna no se llama 'password', debemos decirle a Laravel 
+     * dónde encontrar el hash de la contraseña para el login.
+     */
     public function getAuthPassword()
     {
         return $this->contrasena_hash;
     }
-    // En app/Models/User.php
 
+    /**
+     * ACCESORES (Getters)
+     * Permite usar $user->es_admin para verificar permisos de forma limpia.
+     */
+    public function getEsAdminAttribute(): bool
+    {
+        return (int) $this->rol === 1;
+    }
+
+    /**
+     * RELACIONES (ORM)
+     * Un usuario tiene muchos resultados de cálculos fotovoltaicos.
+     */
     public function resultados()
     {
-        return $this->hasMany(\App\Models\Resultado::class, 'usuario_fr', 'id_usuario');
+        return $this->hasMany(Resultado::class, 'usuario_fr', 'id_usuario');
     }
-// app/Models/User.php
-public function presupuestos()
-{
-    // 'usuario_fr' es el nombre real de tu columna en la tabla 'resultados'
-    return $this->hasMany(\App\Models\Resultado::class, 'usuario_fr', 'id_usuario');
-}
-public function getEsAdminAttribute()
-{
-    return (int) $this->rol === 1; //
-}
+
+    /**
+     * Alias de resultados para mayor claridad en la lógica de negocio.
+     */
+    public function presupuestos()
+    {
+        return $this->resultados();
+    }
+
+    /**
+     * Avatar
+     */
+
+
+    public function getAvatarUrl()
+    {
+        return $this->avatar 
+            ? asset('storage/' . $this->avatar) 
+            : "https://ui-avatars.com/api/?name=" . urlencode($this->nombre) . "&color=7F9CF5&background=EBF4FF";
+    }
 }

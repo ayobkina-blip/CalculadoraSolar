@@ -1,117 +1,88 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-3">
-            <svg class="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
-            {{ __('Configuración del Sistema') }}
+        <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200 leading-tight flex items-center gap-3">
+            <div class="p-2 bg-amber-500/10 rounded-lg">
+                <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <circle cx="12" cy="12" r="3" stroke-width="2"/>
+                </svg>
+            </div>
+            {{ __('Centro de Identidad y Seguridad') }}
         </h2>
     </x-slot>
 
-    <div class="py-12">
+    <div class="py-12 bg-slate-50 dark:bg-slate-950 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 
-                {{-- COLUMNA: NAVEGACIÓN Y LOGOUT (MANTENIDA) --}}
-                <div class="lg:col-span-1 space-y-6">
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 shadow-sm">
-                        <div class="flex flex-col items-center text-center">
-                            <div class="w-20 h-20 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center text-amber-600 text-2xl font-black mb-4">
-                                {{ substr(Auth::user()->name, 0, 1) }}
+                {{-- COLUMNA IZQUIERDA: TARJETA DE IDENTIDAD --}}
+                <div class="lg:col-span-4 space-y-6">
+                    <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 p-8 shadow-sm overflow-hidden relative group">
+                        {{-- Decoración sutil --}}
+                        <div class="absolute -top-24 -right-24 w-48 h-48 bg-amber-500/5 rounded-full blur-3xl group-hover:bg-amber-500/10 transition-colors duration-500"></div>
+                        
+                        <div class="relative flex flex-col items-center text-center">
+                            <div class="w-24 h-24 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 rounded-3xl flex items-center justify-center text-slate-400 text-3xl font-black mb-5 border border-white dark:border-slate-700 shadow-xl">
+                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                             </div>
-                            <h4 class="text-sm font-black text-gray-800 dark:text-gray-200 uppercase tracking-widest">{{ Auth::user()->name }}</h4>
-                            <p class="text-[10px] text-gray-400 font-mono mt-1">ID USUARIO: #{{ Auth::user()->id_usuario ?? Auth::id() }}</p>
+                            <h4 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ Auth::user()->name }}</h4>
+                            <span class="inline-flex items-center px-3 py-1 mt-2 rounded-full bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 text-[9px] font-black uppercase tracking-widest border border-emerald-100 dark:border-emerald-800/50">
+                                <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full mr-2 animate-pulse"></span>
+                                Cuenta Activa
+                            </span>
                         </div>
                         
-                        <div class="mt-8 space-y-2">
-                            <div class="flex items-center justify-between text-[10px] font-bold uppercase text-gray-400 px-2">
-                                <span>Estado</span>
-                                <span class="text-emerald-500 italic text-[9px]">En línea</span>
+                        <div class="mt-10 pt-8 border-t border-slate-100 dark:border-slate-800 space-y-6">
+                            <div class="flex items-center justify-between">
+                                <div class="flex flex-col">
+                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Calculos Totales</span>
+                                    <span class="text-2xl font-black text-slate-900 dark:text-white leading-tight mt-1">{{ $totalSimulaciones ?? '0' }}</span>
+                                </div>
+                                <div class="w-12 h-12 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-slate-400">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                                </div>
                             </div>
-                            <div class="w-full bg-gray-100 dark:bg-gray-700 h-1.5 rounded-full overflow-hidden">
-                                <div class="bg-emerald-500 h-full w-[100%]"></div>
+                            
+                            <div class="flex items-center justify-between">
+                                <div class="flex flex-col">
+                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Ahorro Generado</span>
+                                    <span class="text-2xl font-black text-amber-500 leading-tight mt-1">{{ number_format($ahorroMedio ?? 0, 0) }}€</span>
+                                </div>
+                                <div class="w-12 h-12 bg-amber-50 dark:bg-amber-900/20 rounded-2xl flex items-center justify-center text-amber-500">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                                </div>
                             </div>
                         </div>
 
-                        <form method="POST" action="{{ route('logout') }}" class="mt-8">
-                            @csrf
-                            <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-50 dark:bg-red-900/10 text-red-600 hover:bg-red-600 hover:text-white rounded-xl text-xs font-black uppercase tracking-[0.2em] transition-all border border-red-100 dark:border-red-900/30 group">
-                                <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                                </svg>
-                                {{ __('Cerrar Sesión') }}
-                            </button>
-                        </form>
-                    </div>
-
-                    <div class="bg-[#1e293b] rounded-2xl p-6 text-white shadow-lg">
-                    <p class="text-[9px] font-black uppercase tracking-[0.2em] opacity-60 mb-4 text-amber-400">Resumen de Actividad</p>
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-end border-b border-slate-700 pb-2">
-                            <span class="text-xs font-medium italic">Simulaciones</span>
-                            {{-- Número real --}}
-                            <span class="text-xl font-black font-mono">{{ $totalSimulaciones }}</span>
-                        </div>
-                        <div class="flex justify-between items-end border-b border-slate-700 pb-2">
-                            <span class="text-xs font-medium italic">Ahorro Medio</span>
-                            {{-- Ahorro real formateado --}}
-                            <span class="text-xl font-black font-mono">{{ number_format($ahorroMedio, 0) }}€</span>
+                        <div class="mt-8">
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="w-full py-4 bg-slate-900 dark:bg-white dark:text-slate-900 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl shadow-xl hover:scale-[1.02] active:scale-95 transition-all">
+                                    Desconectar Sistema
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
-                </div>
 
-                {{-- COLUMNA DE FORMULARIOS + NUEVA SECCIÓN --}}
-                <div class="lg:col-span-3 space-y-8">
+                {{-- COLUMNA DERECHA: CONFIGURACIÓN --}}
+                <div class="lg:col-span-8 space-y-8">
                     
-                    {{-- 1. Información de Perfil (Mantenido) --}}
-                    <div class="p-8 bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 rounded-2xl">
+                    {{-- Información Básica --}}
+                    <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 sm:p-10 border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:border-slate-300 dark:hover:border-slate-700">
                         @include('profile.partials.update-profile-information-form')
                     </div>
 
-                    {{-- 2. NUEVA SECCIÓN: ESTADO TÉCNICO DE LA CUENTA (FUNCIONAL) --}}
-                    <div class="p-8 bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 rounded-2xl">
-                        <header class="mb-6">
-                            <h3 class="text-sm font-black text-gray-700 dark:text-gray-300 uppercase tracking-[0.15em] flex items-center gap-2">
-                                <div class="w-1.5 h-4 bg-blue-500 rounded-full"></div>
-                                {{ __('Seguridad y Conexión de Usuario') }}
-                            </h3>
-                            <p class="mt-2 text-[11px] text-gray-400 font-medium italic">
-                                {{ __("Detalles técnicos de tu acceso actual al sistema.") }}
-                            </p>
-                        </header>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="flex items-center gap-4 p-4 rounded-xl bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/20">
-                                <div class="p-2 bg-white dark:bg-gray-800 rounded-lg text-blue-600 shadow-sm">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                                </div>
-                                <div>
-                                    <p class="text-[9px] font-black text-gray-400 uppercase">IP de Conexión</p>
-                                    <p class="text-xs font-mono font-bold text-gray-700 dark:text-gray-200">{{ request()->ip() }}</p>
-                                </div>
-                            </div>
-
-                            <div class="flex items-center gap-4 p-4 rounded-xl bg-emerald-50/50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-900/20">
-                                <div class="p-2 bg-white dark:bg-gray-800 rounded-lg text-emerald-600 shadow-sm">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                                </div>
-                                <div>
-                                    <p class="text-[9px] font-black text-gray-400 uppercase">Estado Cuenta</p>
-                                    <p class="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Verificada</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- 3. Seguridad/Contraseña (Mantenido) --}}
-                    <div class="p-8 bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 rounded-2xl">
+                    {{-- Seguridad --}}
+                    <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 sm:p-10 border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:border-slate-300 dark:hover:border-slate-700">
                         @include('profile.partials.update-password-form')
                     </div>
 
-                    {{-- 4. Borrar Cuenta (Mantenido) --}}
-                    <div class="p-8 bg-red-50/30 dark:bg-red-950/10 border border-red-100 dark:border-red-900/20 rounded-2xl">
-                        @include('profile.partials.delete-user-form')
+                    {{-- ZONA DE PELIGRO: Modal integrado --}}
+                    <div class="bg-rose-50/50 dark:bg-rose-950/10 rounded-[2.5rem] border-2 border-dashed border-rose-200 dark:border-rose-900/30 overflow-hidden">
+                        <div class="p-8 sm:p-10">
+                            @include('profile.partials.delete-user-form')
+                        </div>
                     </div>
                 </div>
 

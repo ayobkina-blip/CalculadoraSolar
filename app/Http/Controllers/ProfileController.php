@@ -8,60 +8,62 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
-use Illuminate\Support\Facades\Schema; // Añadimos esto para la comprobación
+use Illuminate\Support\Facades\Schema;
 
 class ProfileController extends Controller
 {
     /**
-     * Display the user's profile form.
+     * Muestra el formulario de perfil con métricas de rendimiento.
      */
-// app/Http/Controllers/ProfileController.php
-public function edit(Request $request): View
-{
-    $user = $request->user();
+    public function edit(Request $request): View
+    {
+        $user = $request->user();
 
-    // Contamos las filas en la tabla 'resultados' donde 'usuario_fr' sea el ID del usuario
-    $simulaciones = $user->presupuestos()->count();
+        // Extraemos métricas del historial de cálculos del usuario
+        // Usamos la relación presupuestos() definida en el Modelo User
+        $simulaciones = $user->presupuestos()->count();
 
-    // Calculamos el promedio de la columna exacta: 'ahorro_estimado_eur'
-    $ahorroMedio = $user->presupuestos()->avg('ahorro_estimado_eur') ?? 0;
+        // Calculamos el ahorro medio histórico del ingeniero/usuario
+        $ahorroMedio = $user->presupuestos()->avg('ahorro_estimado_eur') ?? 0;
 
-    return view('profile.edit', [
-        'user' => $user,
-        'totalSimulaciones' => $simulaciones,
-        'ahorroMedio' => $ahorroMedio,
-    ]);
-}
+        return view('profile.edit', [
+            'user' => $user,
+            'totalSimulaciones' => $simulaciones,
+            'ahorroMedio' => round($ahorroMedio, 2),
+        ]);
+    }
 
     /**
-     * Update the user's profile information.
+     * Actualiza la identidad del usuario en el sistema.
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $user = $request->user();
         
-        // 1. Validamos los datos
-        $data = $request->validated();
-
-        // 2. Mapeo Manual: 
-        // Si tu columna en la DB es 'nombre', le asignamos el valor de 'name' del form
-        $user->nombre = $data['name']; 
-        $user->email = $data['email'];
-
-        // 3. Manejo del email_verified_at (Evita el error si no existe la columna)
-        if ($user->isDirty('email')) {
-            if (Schema::hasColumn('usuarios', 'email_verified_at')) {
-                $user->email_verified_at = null;
+        // Validar y subir el avatar
+        if ($request->hasFile('avatar')) {
+            // Opcional: Borrar avatar antiguo para ahorrar espacio
+            if ($user->avatar) {
+                \Storage::disk('public')->delete($user->avatar);
             }
+            
+            $path = $request->file('avatar')->store('avatars', 'public');
+            $user->avatar = $path;
+        }
+
+        $user->fill($request->validated());
+
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
         }
 
         $user->save();
 
-        return Redirect::route('profile.edit')->with('status', '¡Configuración guardada con éxito!');
+        return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 
     /**
-     * Delete the user's account.
+     * Elimina permanentemente el registro y purga la sesión.
      */
     public function destroy(Request $request): RedirectResponse
     {
@@ -71,10 +73,13 @@ public function edit(Request $request): View
 
         $user = $request->user();
 
+        // 1. Cierre de sesión de seguridad
         Auth::logout();
 
+        // 2. Eliminación física del registro (y cascada de presupuestos si está configurada)
         $user->delete();
 
+        // 3. Destrucción de la sesión actual
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 

@@ -2,16 +2,21 @@
 
 namespace App\Http\Requests;
 
-use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class ProfileUpdateRequest extends FormRequest
 {
     /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * Determina si el usuario está autorizado a realizar esta solicitud.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Reglas de validación para la Identidad del Usuario.
      */
     public function rules(): array
     {
@@ -23,9 +28,32 @@ class ProfileUpdateRequest extends FormRequest
                 'lowercase',
                 'email',
                 'max:255',
-                // CAMBIO AQUÍ: Especificamos la tabla 'usuarios' y la columna 'id_usuario'
+                // Validación de unicidad adaptada a la tabla 'usuarios' y PK 'id_usuario'
                 Rule::unique('usuarios', 'email')->ignore($this->user()->id_usuario, 'id_usuario'),
             ],
+        ];
+    }
+
+    /**
+     * Atributos personalizados para los errores.
+     */
+    public function attributes(): array
+    {
+        return [
+            'name' => 'Nombre de Usuario',
+            'email' => 'Dirección de Correo',
+        ];
+    }
+
+    /**
+     * Mensajes de error personalizados para la estética SolarCalc.
+     */
+    public function messages(): array
+    {
+        return [
+            'email.unique' => 'Este correo ya está vinculado a otra unidad del sistema.',
+            'email.email' => 'El formato de comunicación ingresado no es válido.',
+            'required' => 'El campo :attribute es crítico para la sincronización.',
         ];
     }
 }
