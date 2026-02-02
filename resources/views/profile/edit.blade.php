@@ -22,10 +22,16 @@
                         <div class="absolute -top-24 -right-24 w-48 h-48 bg-amber-500/5 rounded-full blur-3xl group-hover:bg-amber-500/10 transition-colors duration-500"></div>
                         
                         <div class="relative flex flex-col items-center text-center">
-                            <div class="w-24 h-24 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 rounded-3xl flex items-center justify-center text-slate-400 text-3xl font-black mb-5 border border-white dark:border-slate-700 shadow-xl">
-                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                            {{-- Avatar dinámico --}}
+                            <div class="w-24 h-24 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 rounded-3xl flex items-center justify-center text-slate-400 text-3xl font-black mb-5 border border-white dark:border-slate-700 shadow-xl overflow-hidden">
+                                @if(Auth::user()->avatar)
+                                    <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="w-full h-full object-cover">
+                                @else
+                                    {{ strtoupper(substr(Auth::user()->nombre, 0, 1)) }}
+                                @endif
                             </div>
-                            <h4 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ Auth::user()->name }}</h4>
+                            
+                            <h4 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ Auth::user()->nombre }}</h4>
                             <span class="inline-flex items-center px-3 py-1 mt-2 rounded-full bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 text-[9px] font-black uppercase tracking-widest border border-emerald-100 dark:border-emerald-800/50">
                                 <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full mr-2 animate-pulse"></span>
                                 Cuenta Activa
@@ -35,7 +41,7 @@
                         <div class="mt-10 pt-8 border-t border-slate-100 dark:border-slate-800 space-y-6">
                             <div class="flex items-center justify-between">
                                 <div class="flex flex-col">
-                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Calculos Totales</span>
+                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Cálculos Totales</span>
                                     <span class="text-2xl font-black text-slate-900 dark:text-white leading-tight mt-1">{{ $totalSimulaciones ?? '0' }}</span>
                                 </div>
                                 <div class="w-12 h-12 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-slate-400">
@@ -45,7 +51,7 @@
                             
                             <div class="flex items-center justify-between">
                                 <div class="flex flex-col">
-                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Ahorro Generado</span>
+                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Ahorro Medio</span>
                                     <span class="text-2xl font-black text-amber-500 leading-tight mt-1">{{ number_format($ahorroMedio ?? 0, 0) }}€</span>
                                 </div>
                                 <div class="w-12 h-12 bg-amber-50 dark:bg-amber-900/20 rounded-2xl flex items-center justify-center text-amber-500">
@@ -78,7 +84,7 @@
                         @include('profile.partials.update-password-form')
                     </div>
 
-                    {{-- ZONA DE PELIGRO: Modal integrado --}}
+                    {{-- ZONA DE PELIGRO --}}
                     <div class="bg-rose-50/50 dark:bg-rose-950/10 rounded-[2.5rem] border-2 border-dashed border-rose-200 dark:border-rose-900/30 overflow-hidden">
                         <div class="p-8 sm:p-10">
                             @include('profile.partials.delete-user-form')

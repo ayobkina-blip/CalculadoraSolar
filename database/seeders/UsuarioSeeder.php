@@ -17,7 +17,7 @@ class UsuarioSeeder extends Seeder
         \App\Models\User::create([
             'nombre'   => 'Admin SolarCalc', // CAMBIADO: 'name' -> 'nombre'
             'email'    => 'admin@solarcalc.com',
-            'password' => \Illuminate\Support\Facades\Hash::make('admin1234'),
+            'contrasena_hash' => \Illuminate\Support\Facades\Hash::make('admin1234'),
             'rol'      => 1,
             'avatar'   => null,
         ]);
@@ -26,7 +26,7 @@ class UsuarioSeeder extends Seeder
         \App\Models\User::create([
             'nombre'   => 'Usuario Demo', // CAMBIADO: 'name' -> 'nombre'
             'email'    => 'user@solarcalc.com',
-            'password' => \Illuminate\Support\Facades\Hash::make('user1234'),
+            'contrasena_hash' => \Illuminate\Support\Facades\Hash::make('user1234'),
             'rol'      => 0,
             'avatar'   => null,
         ]);

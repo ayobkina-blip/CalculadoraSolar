@@ -51,35 +51,46 @@
                     <svg x-show="darkMode" x-cloak class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-11.314l.707.707m11.314 11.314l.707.707M12 8a4 4 0 100 8 4 4 0 000-8z"></path></svg>
                 </button>
 
-                {{-- DROPDOWN DE PERFIL (CON FIX DE Z-INDEX) --}}
+                {{-- DROPDOWN DE PERFIL --}}
                 <div class="relative z-[70]">
-                    <x-dropdown align="right" width="56">
+                    {{-- Ancho aumentado a 72 para mayor visibilidad --}}
+                    <x-dropdown align="right" width="72">
                         <x-slot name="trigger">
                             <button class="inline-flex items-center gap-3 px-3 py-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 hover:shadow-md hover:border-slate-300 transition-all group">
-                                <div class="w-8 h-8 bg-gradient-to-br from-amber-400 to-amber-600 text-white rounded-xl flex items-center justify-center text-xs font-black shadow-sm group-hover:rotate-3 transition-transform">
-                                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                <div class="w-8 h-8 bg-amber-500 rounded-xl flex items-center justify-center text-white font-black shadow-sm group-hover:rotate-3 transition-transform overflow-hidden">
+                                    @if(Auth::user()->avatar)
+                                        <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="w-full h-full object-cover">
+                                    @else
+                                        <span class="text-xs">{{ strtoupper(substr(Auth::user()->nombre, 0, 1)) }}</span>
+                                    @endif
                                 </div>
-                                <span class="max-w-[100px] truncate">{{ Auth::user()->name }}</span>
+                                <span class="max-w-[120px] truncate uppercase text-[11px] tracking-wider">{{ Auth::user()->nombre }}</span>
                                 <svg class="w-4 h-4 opacity-40 group-hover:translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                             </button>
                         </x-slot>
 
                         <x-slot name="content">
-                            <div class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 mb-1">
-                                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Identidad</p>
-                                <p class="text-xs font-bold text-slate-800 dark:text-white truncate mt-0.5">{{ Auth::user()->email }}</p>
+                            <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-800 mb-2">
+                                <p class="text-[9px] font-black text-amber-500 uppercase tracking-[0.2em]">Identidad Digital</p>
+                                <p class="text-xs font-bold text-slate-800 dark:text-white truncate mt-1">{{ Auth::user()->email }}</p>
+                                <div class="mt-2 flex items-center gap-2">
+                                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                                    <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Sistema Activo</span>
+                                </div>
                             </div>
 
-                            <x-dropdown-link :href="route('profile.edit')" class="text-[10px] font-black tracking-tight py-3 hover:bg-slate-50 dark:hover:bg-slate-800 mx-1 rounded-xl">
-                                {{ __('Ajustes de Perfil') }}
+                            <x-dropdown-link :href="route('profile.edit')" class="text-[10px] font-black tracking-[0.15em] py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 mx-2 rounded-xl flex items-center gap-3 transition-all">
+                                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                                {{ __('Configurar Perfil') }}
                             </x-dropdown-link>
 
-                            <div class="border-t border-slate-100 dark:border-slate-800 mt-1 pt-1">
+                            <div class="border-t border-slate-100 dark:border-slate-800 mt-2 pt-2">
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
                                     <x-dropdown-link :href="route('logout')"
                                             onclick="event.preventDefault(); this.closest('form').submit();" 
-                                            class="text-[10px] font-black tracking-tight text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 py-3 mx-1 rounded-xl">
+                                            class="text-[10px] font-black tracking-[0.15em] text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 py-4 mx-2 rounded-xl flex items-center gap-3 transition-all">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
                                         {{ __('Cerrar Sesión') }}
                                     </x-dropdown-link>
                                 </form>
@@ -122,11 +133,15 @@
 
         <div class="pt-4 pb-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 px-6">
             <div class="flex items-center gap-4 mb-6">
-                <div class="w-12 h-12 bg-amber-500 rounded-2xl flex items-center justify-center text-white font-black shadow-lg">
-                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                <div class="w-12 h-12 bg-amber-500 rounded-2xl flex items-center justify-center text-white font-black shadow-lg overflow-hidden">
+                    @if(Auth::user()->avatar)
+                        <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="w-full h-full object-cover">
+                    @else
+                        <span class="text-lg">{{ strtoupper(substr(Auth::user()->nombre, 0, 1)) }}</span>
+                    @endif
                 </div>
                 <div>
-                    <div class="font-black text-sm text-slate-900 dark:text-white uppercase tracking-tight">{{ Auth::user()->name }}</div>
+                    <div class="font-black text-sm text-slate-900 dark:text-white uppercase tracking-tight">{{ Auth::user()->nombre }}</div>
                     <div class="font-mono text-[10px] text-slate-500">{{ Auth::user()->email }}</div>
                 </div>
             </div>
