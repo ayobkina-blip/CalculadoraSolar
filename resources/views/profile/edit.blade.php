@@ -11,19 +11,19 @@
         </h2>
     </x-slot>
 
-    <div class="py-12 bg-slate-50 dark:bg-slate-950 min-h-screen">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <div class="py-6 sm:py-8 md:py-12 bg-slate-50 dark:bg-slate-950 min-h-screen">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8">
                 
                 {{-- COLUMNA IZQUIERDA: TARJETA DE IDENTIDAD --}}
-                <div class="lg:col-span-4 space-y-6">
-                    <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 p-8 shadow-sm overflow-hidden relative group">
+                <div class="md:col-span-4 lg:col-span-4 space-y-6">
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl md:rounded-[2.5rem] border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm overflow-hidden relative group">
                         {{-- Decoración sutil --}}
-                        <div class="absolute -top-24 -right-24 w-48 h-48 bg-amber-500/5 rounded-full blur-3xl group-hover:bg-amber-500/10 transition-colors duration-500"></div>
+                        <div class="absolute -top-20 -right-20 sm:-top-24 sm:-right-24 w-40 h-40 sm:w-48 sm:h-48 bg-amber-500/5 rounded-full blur-3xl group-hover:bg-amber-500/10 transition-colors duration-500"></div>
                         
                         <div class="relative flex flex-col items-center text-center">
                             {{-- Avatar dinámico --}}
-                            <div class="w-24 h-24 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 rounded-3xl flex items-center justify-center text-slate-400 text-3xl font-black mb-5 border border-white dark:border-slate-700 shadow-xl overflow-hidden">
+                            <div class="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 rounded-2xl sm:rounded-3xl flex items-center justify-center text-slate-400 text-2xl sm:text-3xl font-black mb-4 sm:mb-5 border border-white dark:border-slate-700 shadow-xl overflow-hidden">
                                 @if(Auth::user()->avatar)
                                     <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="w-full h-full object-cover">
                                 @else
@@ -31,39 +31,39 @@
                                 @endif
                             </div>
                             
-                            <h4 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ Auth::user()->nombre }}</h4>
+                            <h4 class="text-base sm:text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ Auth::user()->nombre }}</h4>
                             <span class="inline-flex items-center px-3 py-1 mt-2 rounded-full bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 text-[9px] font-black uppercase tracking-widest border border-emerald-100 dark:border-emerald-800/50">
                                 <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full mr-2 animate-pulse"></span>
                                 Cuenta Activa
                             </span>
                         </div>
                         
-                        <div class="mt-10 pt-8 border-t border-slate-100 dark:border-slate-800 space-y-6">
+                        <div class="mt-8 sm:mt-10 pt-6 sm:pt-8 border-t border-slate-100 dark:border-slate-800 space-y-5 sm:space-y-6">
                             <div class="flex items-center justify-between">
                                 <div class="flex flex-col">
                                     <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Cálculos Totales</span>
-                                    <span class="text-2xl font-black text-slate-900 dark:text-white leading-tight mt-1">{{ $totalSimulaciones ?? '0' }}</span>
+                                    <span class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white leading-tight mt-1">{{ $totalSimulaciones ?? '0' }}</span>
                                 </div>
-                                <div class="w-12 h-12 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-slate-400">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-slate-50 dark:bg-slate-800 rounded-xl sm:rounded-2xl flex items-center justify-center text-slate-400">
+                                    <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
                                 </div>
                             </div>
                             
                             <div class="flex items-center justify-between">
                                 <div class="flex flex-col">
                                     <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Ahorro Medio</span>
-                                    <span class="text-2xl font-black text-amber-500 leading-tight mt-1">{{ number_format($ahorroMedio ?? 0, 0) }}€</span>
+                                    <span class="text-xl sm:text-2xl font-black text-amber-500 leading-tight mt-1">{{ number_format($ahorroMedio ?? 0, 0) }}€</span>
                                 </div>
-                                <div class="w-12 h-12 bg-amber-50 dark:bg-amber-900/20 rounded-2xl flex items-center justify-center text-amber-500">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-amber-50 dark:bg-amber-900/20 rounded-xl sm:rounded-2xl flex items-center justify-center text-amber-500">
+                                    <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="mt-8">
+                        <div class="mt-6 sm:mt-8">
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button type="submit" class="w-full py-4 bg-slate-900 dark:bg-white dark:text-slate-900 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl shadow-xl hover:scale-[1.02] active:scale-95 transition-all">
+                                <button type="submit" class="w-full py-3 sm:py-4 bg-slate-900 dark:bg-white dark:text-slate-900 text-white text-xs sm:text-[10px] font-black uppercase tracking-wider sm:tracking-[0.2em] rounded-xl sm:rounded-2xl shadow-xl hover:scale-[1.02] active:scale-95 transition-all">
                                     Desconectar Sistema
                                 </button>
                             </form>
@@ -72,21 +72,21 @@
                 </div>
 
                 {{-- COLUMNA DERECHA: CONFIGURACIÓN --}}
-                <div class="lg:col-span-8 space-y-8">
+                <div class="md:col-span-8 lg:col-span-8 space-y-6 md:space-y-8">
                     
                     {{-- Información Básica --}}
-                    <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 sm:p-10 border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:border-slate-300 dark:hover:border-slate-700">
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl md:rounded-[2.5rem] p-6 sm:p-8 md:p-10 border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:border-slate-300 dark:hover:border-slate-700">
                         @include('profile.partials.update-profile-information-form')
                     </div>
 
                     {{-- Seguridad --}}
-                    <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 sm:p-10 border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:border-slate-300 dark:hover:border-slate-700">
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl md:rounded-[2.5rem] p-6 sm:p-8 md:p-10 border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:border-slate-300 dark:hover:border-slate-700">
                         @include('profile.partials.update-password-form')
                     </div>
 
                     {{-- ZONA DE PELIGRO --}}
-                    <div class="bg-rose-50/50 dark:bg-rose-950/10 rounded-[2.5rem] border-2 border-dashed border-rose-200 dark:border-rose-900/30 overflow-hidden">
-                        <div class="p-8 sm:p-10">
+                    <div class="bg-rose-50/50 dark:bg-rose-950/10 rounded-2xl md:rounded-[2.5rem] border-2 border-dashed border-rose-200 dark:border-rose-900/30 overflow-hidden">
+                        <div class="p-6 sm:p-8 md:p-10">
                             @include('profile.partials.delete-user-form')
                         </div>
                     </div>

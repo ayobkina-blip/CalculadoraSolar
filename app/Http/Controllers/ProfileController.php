@@ -35,31 +35,52 @@ class ProfileController extends Controller
 
     /**
      * Actualiza la identidad del usuario en el sistema.
+     * Permite actualizar solo nombre, solo email, solo avatar, o cualquier combinación.
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $user = $request->user();
+        $validated = $request->validated();
         
-        // Validar y subir el avatar
+        // 1. Procesar avatar si se subió (automático)
         if ($request->hasFile('avatar')) {
-            // Opcional: Borrar avatar antiguo para ahorrar espacio
-            if ($user->avatar) {
-                \Storage::disk('public')->delete($user->avatar);
+            try {
+                // Borrar avatar antiguo si existe para ahorrar espacio
+                if ($user->avatar && \Storage::disk('public')->exists($user->avatar)) {
+                    \Storage::disk('public')->delete($user->avatar);
+                }
+                
+                // Guardar nueva imagen
+                $path = $request->file('avatar')->store('avatars', 'public');
+                $user->avatar = $path;
+            } catch (\Exception $e) {
+                return Redirect::route('profile.edit')
+                    ->withErrors(['avatar' => 'Error al guardar la imagen: ' . $e->getMessage()]);
             }
+        }
+        
+        // 2. Actualizar nombre solo si se proporcionó
+        if (isset($validated['name']) && !empty(trim($validated['name']))) {
+            $user->nombre = trim($validated['name']);
+        }
+        
+        // 3. Actualizar email solo si se proporcionó
+        if (isset($validated['email']) && !empty(trim($validated['email']))) {
+            $emailAnterior = $user->email;
+            $user->email = strtolower(trim($validated['email']));
             
-            $path = $request->file('avatar')->store('avatars', 'public');
-            $user->avatar = $path;
+            // Si cambió el email, invalidar verificación
+            if ($emailAnterior !== $user->email) {
+                $user->email_verified_at = null;
+            }
         }
-
-        $user->fill($request->validated());
-
-        if ($user->isDirty('email')) {
-            $user->email_verified_at = null;
-        }
-
+        
+        // 4. Guardar cambios
         $user->save();
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        return Redirect::route('profile.edit')
+            ->with('status', 'profile-updated')
+            ->with('success', 'Perfil actualizado correctamente');
     }
 
     /**

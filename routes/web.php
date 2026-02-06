@@ -34,22 +34,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return view('solarcalc.resultados', compact('resultado'));
     })->name('solar.resultados');
 
-    Route::get('/presupuestos', function () {
-        // Usamos id_usuario por tu esquema personalizado
-        $presupuestos = Resultado::where('usuario_fr', Auth::user()->id_usuario)->get();
-        return view('solarcalc.presupuestos', compact('presupuestos'));
-    })->name('solar.presupuestos');
+    Route::get('/presupuestos', [SolarController::class, 'presupuestos'])->name('solar.presupuestos');
 
     // 4. Estadísticas e Informes
     Route::get('/estadisticas', [SolarController::class, 'estadisticas'])->name('solar.estadisticas');
     
     Route::get('/solar/descargar-pdf/{id}', [SolarController::class, 'descargarPDF'])->name('solar.pdf');
 
-    // 5. Panel de Administración (Solo para Rol = 1)
-    Route::prefix('admin')->group(function () {
+    // 5. Panel de Administración (Solo para Rol = 1) - Protegido con middleware
+    Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/gestion', [SolarController::class, 'adminIndex'])->name('solar.admin');
         Route::post('/usuario/{id}/rol', [SolarController::class, 'cambiarRol'])->name('admin.cambiarRol');
+        Route::get('/usuarios', [UsuarioController::class, 'index'])->name('admin.usuarios');
         Route::post('/resultado/{id}/estado', [SolarController::class, 'cambiarEstado'])->name('admin.cambiarEstado');
+        Route::get('/estadisticas', [SolarController::class, 'adminEstadisticas'])->name('admin.estadisticas');
+        Route::get('/usuarios', [UsuarioController::class, 'index'])->name('admin.usuarios');
+        Route::get('/exportar/csv', [SolarController::class, 'exportarCSV'])->name('admin.exportar.csv');
     });
 });
 

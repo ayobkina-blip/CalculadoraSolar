@@ -15,16 +15,17 @@
                 </div>
 
                 {{-- LINKS DE NAVEGACIÓN --}}
+                @php
+                    // Definir enlaces de navegación una sola vez para reutilización
+                    $navLinks = [
+                        ['route' => 'dashboard', 'label' => 'Inicio'],
+                        ['route' => 'solar.calculadora', 'label' => 'Calculadora'],
+                        ['route' => 'solar.presupuestos', 'label' => 'Mis Proyectos'],
+                        ['route' => 'solar.estadisticas', 'label' => 'Métricas'],
+                    ];
+                @endphp
+                
                 <div class="hidden space-x-2 sm:-my-px sm:ms-10 sm:flex items-center">
-                    @php
-                        $navLinks = [
-                            ['route' => 'dashboard', 'label' => 'Inicio'],
-                            ['route' => 'solar.calculadora', 'label' => 'Calculadora'],
-                            ['route' => 'solar.presupuestos', 'label' => 'Mis Proyectos'],
-                            ['route' => 'solar.estadisticas', 'label' => 'Métricas'],
-                        ];
-                    @endphp
-
                     @foreach($navLinks as $link)
                         <x-nav-link :href="route($link['route'])" :active="request()->routeIs($link['route'])" 
                             class="text-[10px] font-black uppercase tracking-widest transition-all px-4 py-2 rounded-xl border-none hover:bg-slate-50 dark:hover:bg-slate-800 {{ request()->routeIs($link['route']) ? 'text-amber-600 dark:text-amber-400 bg-amber-50/50 dark:bg-amber-900/10' : '' }}">
@@ -32,9 +33,10 @@
                         </x-nav-link>
                     @endforeach
 
-                    @if(Auth::user()->rol == 1) 
-                        <x-nav-link :href="route('solar.admin')" :active="request()->routeIs('solar.admin')" 
-                            class="text-[10px] font-black uppercase tracking-widest text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 px-4 py-2 rounded-xl border-none {{ request()->routeIs('solar.admin') ? 'bg-red-50 dark:bg-red-900/20' : '' }}">
+                    {{-- Enlace al panel de administración (solo visible para administradores) --}}
+                    @if(Auth::check() && (Auth::user()->rol == 1 || Auth::user()->es_admin)) 
+                        <x-nav-link :href="route('solar.admin')" :active="request()->routeIs('solar.admin') || request()->routeIs('admin.*')" 
+                            class="text-[10px] font-black uppercase tracking-widest text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 px-4 py-2 rounded-xl border-none {{ request()->routeIs('solar.admin') || request()->routeIs('admin.*') ? 'bg-red-50 dark:bg-red-900/20' : '' }}">
                             {{ __('Admin Panel') }}
                         </x-nav-link>
                     @endif
@@ -51,49 +53,67 @@
                     <svg x-show="darkMode" x-cloak class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-11.314l.707.707m11.314 11.314l.707.707M12 8a4 4 0 100 8 4 4 0 000-8z"></path></svg>
                 </button>
 
-                {{-- DROPDOWN DE PERFIL --}}
+                {{-- DROPDOWN DE PERFIL MEJORADO --}}
                 <div class="relative z-[70]">
-                    {{-- Ancho aumentado a 72 para mayor visibilidad --}}
-                    <x-dropdown align="right" width="72">
+                    <x-dropdown align="right" width="80">
                         <x-slot name="trigger">
-                            <button class="inline-flex items-center gap-3 px-3 py-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 hover:shadow-md hover:border-slate-300 transition-all group">
-                                <div class="w-8 h-8 bg-amber-500 rounded-xl flex items-center justify-center text-white font-black shadow-sm group-hover:rotate-3 transition-transform overflow-hidden">
+                            <button class="inline-flex items-center gap-2.5 px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 hover:shadow-lg hover:border-amber-300 dark:hover:border-amber-600 transition-all group backdrop-blur-sm">
+                                <div class="w-9 h-9 bg-gradient-to-br from-amber-400 to-amber-600 rounded-lg flex items-center justify-center text-white font-black shadow-md group-hover:scale-110 transition-transform overflow-hidden ring-2 ring-amber-200 dark:ring-amber-800">
                                     @if(Auth::user()->avatar)
-                                        <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="w-full h-full object-cover">
+                                        <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="{{ Auth::user()->nombre }}" class="w-full h-full object-cover">
                                     @else
-                                        <span class="text-xs">{{ strtoupper(substr(Auth::user()->nombre, 0, 1)) }}</span>
+                                        <span class="text-sm">{{ strtoupper(substr(Auth::user()->nombre ?? 'U', 0, 1)) }}</span>
                                     @endif
                                 </div>
-                                <span class="max-w-[120px] truncate uppercase text-[11px] tracking-wider">{{ Auth::user()->nombre }}</span>
-                                <svg class="w-4 h-4 opacity-40 group-hover:translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                <span class="max-w-[100px] truncate font-semibold text-xs uppercase tracking-wide hidden sm:block">{{ Auth::user()->nombre }}</span>
+                                <svg class="w-4 h-4 text-slate-400 group-hover:text-amber-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
+                                </svg>
                             </button>
                         </x-slot>
 
                         <x-slot name="content">
-                            <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-800 mb-2">
-                                <p class="text-[9px] font-black text-amber-500 uppercase tracking-[0.2em]">Identidad Digital</p>
-                                <p class="text-xs font-bold text-slate-800 dark:text-white truncate mt-1">{{ Auth::user()->email }}</p>
-                                <div class="mt-2 flex items-center gap-2">
+                            <div class="px-5 py-4 border-b border-slate-100 dark:border-slate-700 bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-amber-400 to-amber-600 rounded-lg flex items-center justify-center text-white font-black shadow-md overflow-hidden ring-2 ring-amber-200 dark:ring-amber-800">
+                                        @if(Auth::user()->avatar)
+                                            <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="{{ Auth::user()->nombre }}" class="w-full h-full object-cover">
+                                        @else
+                                            <span class="text-sm">{{ strtoupper(substr(Auth::user()->nombre ?? 'U', 0, 1)) }}</span>
+                                        @endif
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-xs font-black text-slate-900 dark:text-white truncate">{{ Auth::user()->nombre }}</p>
+                                        <p class="text-[10px] text-slate-500 dark:text-slate-400 truncate mt-0.5">{{ Auth::user()->email }}</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 px-1">
                                     <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                                    <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Sistema Activo</span>
+                                    <span class="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Sesión Activa</span>
                                 </div>
                             </div>
 
-                            <x-dropdown-link :href="route('profile.edit')" class="text-[10px] font-black tracking-[0.15em] py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 mx-2 rounded-xl flex items-center gap-3 transition-all">
-                                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                                {{ __('Configurar Perfil') }}
-                            </x-dropdown-link>
+                            <div class="py-2">
+                                <x-dropdown-link :href="route('profile.edit')" class="text-xs font-semibold py-3 px-4 hover:bg-amber-50 dark:hover:bg-amber-900/20 mx-2 rounded-lg flex items-center gap-3 transition-all group">
+                                    <svg class="w-4 h-4 text-slate-400 group-hover:text-amber-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                    </svg>
+                                    <span class="text-slate-700 dark:text-slate-300 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">{{ __('Configurar Perfil') }}</span>
+                                </x-dropdown-link>
 
-                            <div class="border-t border-slate-100 dark:border-slate-800 mt-2 pt-2">
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <x-dropdown-link :href="route('logout')"
-                                            onclick="event.preventDefault(); this.closest('form').submit();" 
-                                            class="text-[10px] font-black tracking-[0.15em] text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 py-4 mx-2 rounded-xl flex items-center gap-3 transition-all">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                                        {{ __('Cerrar Sesión') }}
-                                    </x-dropdown-link>
-                                </form>
+                                <div class="border-t border-slate-100 dark:border-slate-700 mt-2 pt-2">
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <x-dropdown-link :href="route('logout')"
+                                                onclick="event.preventDefault(); this.closest('form').submit();" 
+                                                class="text-xs font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 py-3 px-4 mx-2 rounded-lg flex items-center gap-3 transition-all group">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                            </svg>
+                                            <span>{{ __('Cerrar Sesión') }}</span>
+                                        </x-dropdown-link>
+                                    </form>
+                                </div>
                             </div>
                         </x-slot>
                     </x-dropdown>

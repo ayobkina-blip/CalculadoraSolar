@@ -37,11 +37,65 @@
             
             {{-- TABLA DE PRESUPUESTOS --}}
             <div class="bg-white dark:bg-slate-900 shadow-2xl shadow-slate-200/50 dark:shadow-none border border-slate-200 dark:border-slate-800 rounded-[2.5rem] overflow-hidden">
-                <div class="px-8 py-7 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl">
-                    <div class="flex items-center gap-3">
-                        <div class="w-2 h-6 bg-red-600 rounded-full"></div>
-                        <h3 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">Auditoría de Sistemas</h3>
+                <div class="px-8 py-7 border-b border-slate-100 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-2 h-6 bg-red-600 rounded-full"></div>
+                            <h3 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">Auditoría de Sistemas</h3>
+                        </div>
+                        <a href="{{ route('admin.exportar.csv', request()->all()) }}" 
+                           class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold uppercase transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            Exportar CSV
+                        </a>
                     </div>
+                    
+                    {{-- FILTROS --}}
+                    <form method="GET" action="{{ route('solar.admin') }}" class="flex flex-wrap gap-4 items-end">
+                        <div class="flex-1 min-w-[200px]">
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2">Buscar</label>
+                            <input type="text" 
+                                   name="buscar" 
+                                   value="{{ request('buscar') }}" 
+                                   placeholder="Ubicación, usuario, email..."
+                                   class="w-full px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none">
+                        </div>
+                        
+                        <div class="min-w-[150px]">
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2">Estado</label>
+                            <select name="estado" 
+                                    class="w-full px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none">
+                                <option value="">Todos</option>
+                                <option value="pendiente" {{ request('estado') == 'pendiente' ? 'selected' : '' }}>Pendiente</option>
+                                <option value="aprobado" {{ request('estado') == 'aprobado' ? 'selected' : '' }}>Aprobado</option>
+                                <option value="rechazado" {{ request('estado') == 'rechazado' ? 'selected' : '' }}>Rechazado</option>
+                            </select>
+                        </div>
+                        
+                        <div class="min-w-[180px]">
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2">Ordenar</label>
+                            <select name="orden" 
+                                    class="w-full px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none">
+                                <option value="fecha_desc" {{ request('orden') == 'fecha_desc' ? 'selected' : '' }}>Más recientes</option>
+                                <option value="fecha_asc" {{ request('orden') == 'fecha_asc' ? 'selected' : '' }}>Más antiguos</option>
+                                <option value="potencia_desc" {{ request('orden') == 'potencia_desc' ? 'selected' : '' }}>Mayor potencia</option>
+                                <option value="ahorro_desc" {{ request('orden') == 'ahorro_desc' ? 'selected' : '' }}>Mayor ahorro</option>
+                            </select>
+                        </div>
+                        
+                        <div class="flex gap-2">
+                            <button type="submit" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-black uppercase transition">
+                                Filtrar
+                            </button>
+                            @if(request()->hasAny(['buscar', 'estado', 'orden']))
+                                <a href="{{ route('solar.admin') }}" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-black uppercase transition">
+                                    Limpiar
+                                </a>
+                            @endif
+                        </div>
+                    </form>
                 </div>
 
                 <div class="overflow-x-auto">
@@ -108,11 +162,29 @@
                                 </td>
                             </tr>
                             @empty
-                            {{-- ... --}}
+                            <tr>
+                                <td colspan="4" class="px-8 py-12 text-center text-slate-400 italic">
+                                    No se encontraron presupuestos con los filtros aplicados.
+                                </td>
+                            </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
+                
+                {{-- PAGINACIÓN --}}
+                @if($todosLosPresupuestos->hasPages())
+                <div class="px-8 py-4 bg-slate-50/50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800">
+                    <div class="flex items-center justify-between">
+                        <div class="text-xs text-slate-500 dark:text-slate-400">
+                            Mostrando {{ $todosLosPresupuestos->firstItem() }} - {{ $todosLosPresupuestos->lastItem() }} de {{ $todosLosPresupuestos->total() }} resultados
+                        </div>
+                        <div>
+                            {{ $todosLosPresupuestos->links() }}
+                        </div>
+                    </div>
+                </div>
+                @endif
             </div>
 
             {{-- GESTIÓN DE RANGOS CON MODAL PROFESIONAL --}}
@@ -210,6 +282,7 @@
                                     {{-- Formulario dinámico --}}
                                     <form :action="'{{ url('admin/usuario') }}/' + targetId + '/rol'" method="POST">
                                         @csrf
+                                        <input type="hidden" name="rol" :value="targetAction === 'promocionar' ? 1 : 0">
                                         <button type="submit" class="w-full py-4 px-6 bg-red-600 hover:bg-red-700 text-white text-xs font-black uppercase tracking-widest rounded-2xl shadow-lg shadow-red-200 dark:shadow-none transition-all active:scale-95">
                                             Confirmar Acción
                                         </button>
