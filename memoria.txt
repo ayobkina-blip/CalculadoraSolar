@@ -1,0 +1,196 @@
+Proyecto Intermodular PI2 – 2º DAW
+• Hoy vamos a aprovechar que ya tenéis código
+avanzado para empezar a construir una memoria que
+tenga sentido, conectada con lo que realmente estáis
+programando.
+
+S16 · Empezar la memoria en serio (sin
+dejar el código)
+
+Dónde
+estamos
+ahora mismo
+
+ La mayoría ya tenéis: sector
+definido, necesidades, arquitectura
+básica y funcionalidad principal en
+marcha.
+ Quedan por delante: cerrar
+funcionalidades, probar bien el
+camino demo y redactar la memoria
+final.
+ Si empezamos la memoria ahora, al
+final del curso no habrá que hacerla a
+contrarreloj.
+
+Objetivo de
+la sesión
+• Al final de la sesión de hoy deberías
+tener:
+ Un índice actualizado de tu memoria
+(capítulos y subapartados).
+ Un primer borrador de los capítulos 1
+y 2 (Introducción y Análisis de sector y
+necesidades).
+ Un inicio del capítulo 3 (Diseño del
+proyecto: stack y arquitectura básica).
+ Un mini checklist de coherencia entre
+lo que has programado y lo que aparece
+en la memoria.
+ AVANCE
+CON
+EL
+CÓDIGO
+IMPLEMENTADO
+
+Recordatorio: estructura de la memoria
+
+1. Introducción
+→
+presentación
+del proyecto,
+objetivos
+generales y
+alcance.
+
+2. Análisis del
+sector y
+necesidades
+→ en qué
+contexto existe
+tu proyecto y
+qué problemas
+resuelve.
+
+3. Diseño del
+proyecto →
+tecnologías,
+arquitectura,
+decisiones
+técnicas.
+
+6.
+Conclusiones,
+7. Bibliografía,
+8. Anexos.
+
+4. Planificación
+y ejecución →
+fases,
+cronograma,
+recursos,
+cómo se ha
+llevado a cabo.
+
+5. Seguimiento
+y control →
+pruebas,
+incidencias,
+cambios.
+
+Qué NO es una memoria de PI2
+No es un ‘diario de guerra’ escribiendo cada comando que has usado.
+No es un copia/pega de documentación oficial de Laravel o PHP.
+No es una redacción de relleno sin conexión con tu código.
+Es un documento que explica: por qué existe tu proyecto, cómo está
+diseñado, cómo lo has construido
+y cómo has comprobado que funciona, usando un lenguaje técnico pero
+claro.
+
+Capítulo 1 – Introducción (ejemplo)
+Una buena introducción
+suele responder a:
+
+• Qué problema general hay
+(ej.: gestión de reservas en
+un gimnasio pequeño).
+
+• Qué propone tu proyecto
+(ej.: aplicación web para
+gestionar altas, reservas y
+pagos básicos).
+
+• Para quién está pensada
+(ej.: personal del gimnasio y
+socios).
+
+• Qué módulos de DAW se
+ponen en juego (BBDD,
+servidor, cliente, diseño,
+despliegue).
+
+Debe caber en más o menos
+media página, clara y sin
+tecnicismos innecesarios.
+
+Capítulo 2 – Sector y
+necesidades (resumen)
+• Aquí no empezamos de cero: ya
+trabajasteis sector, perfiles de
+usuario y necesidades.
+• Este capítulo debe recoger de
+forma ordenada:
+• Tipo de sector (educación,
+comercio, salud, ocio, etc.) y
+ejemplo de ‘empresa tipo’.
+• Perfiles principales que van a usar
+la web y qué tareas hacen.
+•
+Necesidades
+detectadas
+(problemas concretos que resuelve
+vuestra aplicación).
+NO hace falta escribir una biblia!!!
+
+Capítulo 3 – Diseño del
+proyecto: tecnologías y
+arquitectura
+• En este capítulo ‘bajamos’ a lo
+técnico pero de forma entendible:
+• Stack elegido: PHP simple, Laravel,
+Node, etc. y por qué tiene sentido en
+vuestro caso.
+• Tecnologías clave: motor de BBDD,
+servidor web, librerías importantes,
+etc.
+• Arquitectura básica: diagrama
+simple con navegador → servidor →
+base de datos.
+• Hoy empezaremos a redactar la
+parte de tecnologías y a relacionarla
+con lo que ya habéis programado.
+
+Conectar código y
+memoria
+• Cada decisión técnica del código
+debería poder aparecer reflejada en la
+memoria:
+• Si has creado tablas nuevas →
+deberían aparecer en el diseño de la
+base de datos.
+• Si has añadido un formulario
+importante → debería mencionarse en
+el diseño de la interfaz o del flujo.
+• Si has cambiado el stack o la forma de
+organizar el código → debería explicarse
+en el capítulo 3.
+• La memoria no es algo separado del
+proyecto: cuenta la historia técnica de lo
+que has construido.
+
+RA y módulos
+que estamos
+tocando hoy
+
+• RA2 – Diseñar proyectos relacionados con las
+competencias del título:
+• Documentar el diseño técnico (tecnologías,
+arquitectura, decisiones clave).
+• RA3 – Planificar y ejecutar el proyecto:
+• Encajar el avance de código dentro del plan
+general y reflejarlo en la memoria.
+• RA4 – Seguimiento y control:
+• Dejar rastro escrito de problemas, cambios y
+decisiones.
+
+
