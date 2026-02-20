@@ -1,6 +1,8 @@
+{{-- Prioridades 1-5 aplicadas: cards móvil + tabla sm+, mejoras visuales de filtros/tabla, estado vacío unificado y paginación/footer --}}
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-3">
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-3">
             <svg class="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
             </svg>
@@ -8,38 +10,39 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-xl border border-gray-200 dark:border-gray-700">
-                
-                {{-- CABECERA DE SECCIÓN --}}
-                <div class="px-8 py-6 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/20">
-                    <div class="flex justify-between items-center mb-4">
-                        <div>
-                            <h3 class="text-lg font-bold text-gray-900 dark:text-white">Simulaciones Guardadas</h3>
-                            <p class="text-sm text-gray-500">Listado completo de tus análisis fotovoltaicos.</p>
-                        </div>
-                        <a href="{{ route('solar.calculadora') }}" class="inline-flex items-center px-4 py-2 bg-amber-600 border border-transparent rounded-lg font-bold text-xs text-white uppercase tracking-widest hover:bg-amber-700 transition shadow-md active:scale-95">
-                            + Nueva Simulación
-                        </a>
+    <div class="py-8 sm:py-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-xl overflow-hidden p-5 sm:p-6 lg:p-8">
+                <div class="flex items-center justify-between gap-4 mb-6 flex-wrap">
+                    <div>
+                        <h3 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Simulaciones Guardadas</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Listado completo de tus análisis fotovoltaicos.</p>
                     </div>
-                    
-                    {{-- FILTROS Y BÚSQUEDA --}}
-                    <form method="GET" action="{{ route('solar.presupuestos') }}" class="flex flex-wrap gap-4 items-end">
-                        <div class="flex-1 min-w-[200px]">
-                            <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-2">Buscar por ubicación</label>
-                            <input type="text" 
-                                   name="buscar" 
-                                   value="{{ request('buscar') }}" 
+                    <a href="{{ route('solar.calculadora') }}"
+                       class="inline-flex items-center gap-2 py-2.5 px-5 rounded-xl bg-amber-600 text-white text-sm font-semibold hover:bg-amber-500 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
+                        <span>+</span>
+                        <span>Nueva Simulación</span>
+                    </a>
+                </div>
+
+                <form method="GET" action="{{ route('solar.presupuestos') }}" class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 sm:p-5 shadow-sm mb-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 items-end">
+                        <div class="sm:col-span-2">
+                            <label for="buscar" class="sr-only">Buscar por ubicación</label>
+                            <input id="buscar"
+                                   type="text"
+                                   name="buscar"
+                                   value="{{ request('buscar') }}"
                                    placeholder="Ej: Valencia, Madrid..."
-                                   class="w-full px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none">
+                                   class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
                         </div>
-                        
-                        <div class="min-w-[180px]">
-                            <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-2">Ordenar por</label>
-                            <select name="orden" 
+
+                        <div>
+                            <label for="orden" class="sr-only">Ordenar por</label>
+                            <select id="orden"
+                                    name="orden"
                                     onchange="this.form.submit()"
-                                    class="w-full px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none">
+                                    class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
                                 <option value="fecha_desc" {{ request('orden') == 'fecha_desc' ? 'selected' : '' }}>Más recientes</option>
                                 <option value="fecha_asc" {{ request('orden') == 'fecha_asc' ? 'selected' : '' }}>Más antiguos</option>
                                 <option value="potencia_desc" {{ request('orden') == 'potencia_desc' ? 'selected' : '' }}>Mayor potencia</option>
@@ -47,99 +50,154 @@
                                 <option value="ahorro_desc" {{ request('orden') == 'ahorro_desc' ? 'selected' : '' }}>Mayor ahorro</option>
                             </select>
                         </div>
-                        
-                        <div class="flex gap-2">
-                            <button type="submit" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-bold uppercase transition">
+
+                        <div class="flex items-center gap-2 sm:justify-end">
+                            <button type="submit"
+                                    class="px-5 py-2.5 rounded-xl bg-amber-600 text-white text-sm font-semibold hover:bg-amber-500 hover:shadow-md transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-amber-500">
                                 Filtrar
                             </button>
                             @if(request()->hasAny(['buscar', 'orden']))
-                                <a href="{{ route('solar.presupuestos') }}" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg text-xs font-bold uppercase transition">
+                                <a href="{{ route('solar.presupuestos') }}"
+                                   class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-600 text-sm font-semibold text-gray-600 dark:text-gray-300 hover:border-red-400 hover:text-red-500 transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-400">
                                     Limpiar
                                 </a>
                             @endif
                         </div>
-                    </form>
-                </div>
+                    </div>
+                </form>
 
-                {{-- TABLA DE RESULTADOS --}}
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="text-xs uppercase tracking-widest text-gray-400 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-                                <th class="px-8 py-4 font-black">ID Ref.</th>
-                                <th class="px-8 py-4 font-black">Ubicación</th>
-                                <th class="px-8 py-4 font-black">Potencia</th>
-                                <th class="px-8 py-4 font-black">Ahorro Est.</th>
-                                <th class="px-8 py-4 font-black">ROI</th>
-                                <th class="px-8 py-4 font-black text-right">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-                            @forelse($presupuestos as $item)
-                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors group">
-                                    <td class="px-8 py-4 font-mono text-xs text-gray-400">#{{ $item->id_resultado }}</td>
-                                    <td class="px-8 py-4 text-sm font-medium text-gray-900 dark:text-white">{{ $item->ubicacion }}</td>
-                                    <td class="px-8 py-4 text-sm text-gray-600 dark:text-gray-300">{{ number_format($item->potencia_instalacion_kwp, 2) }} kWp</td>
-                                    <td class="px-8 py-4 text-sm font-bold text-green-600">{{ number_format($item->ahorro_estimado_eur, 2) }} €/año</td>
-                                    <td class="px-8 py-4 text-sm text-gray-500">{{ $item->roi_anyos }} años</td>
-                                    <td class="px-8 py-4 text-right">
-                                        <div class="flex items-center justify-end gap-3">
-                                            {{-- Enlace a Detalles --}}
-                                            <a href="{{ route('solar.resultados', ['id' => $item->id_resultado]) }}" 
-                                               class="text-amber-600 hover:text-amber-700 font-bold uppercase tracking-tighter transition text-[11px]">
-                                                Detalles
-                                            </a>
+                <div class="sm:hidden space-y-4">
+                    @forelse($presupuestos as $item)
+                        <article class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-5 shadow-sm">
+                            <div class="flex items-start justify-between gap-3 mb-4">
+                                <div class="min-w-0">
+                                    <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                                        {{ $item->ubicacion ?? 'Sin ubicación' }}
+                                    </p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                                        {{ $item->created_at?->format('d/m/Y') ?? 'Sin fecha' }}
+                                    </p>
+                                </div>
+                            </div>
 
-                                            {{-- Botón PDF --}}
-                                            <a href="{{ route('solar.pdf', $item->id_resultado) }}" 
-                                               title="Descargar PDF"
-                                               class="p-1.5 text-gray-500 hover:text-red-600 dark:hover:text-red-400 transition-colors bg-gray-100 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9h1m1 0h1m-2 4h1m1 0h1m-2 4h1m1 0h1" />
-                                                </svg>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="6" class="px-8 py-12 text-center text-gray-400 italic">
-                                        No se han encontrado simulaciones previas en tu historial.
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
+                            <div class="grid grid-cols-2 gap-3 mb-4">
+                                <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-3">
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Potencia</p>
+                                    <p class="text-sm font-bold text-gray-900 dark:text-white">
+                                        {{ number_format($item->potencia_instalacion_kwp, 2) }} kWp
+                                    </p>
+                                </div>
+                                <div class="bg-amber-50 dark:bg-amber-950/30 rounded-xl p-3">
+                                    <p class="text-xs text-amber-600 dark:text-amber-400 mb-1">Ahorro est.</p>
+                                    <p class="text-sm font-bold text-amber-600 dark:text-amber-400">
+                                        {{ number_format($item->ahorro_estimado_eur, 0) }} €/año
+                                    </p>
+                                </div>
+                                <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-3 col-span-2">
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Retorno inversión</p>
+                                    <p class="text-sm font-bold text-gray-900 dark:text-white">
+                                        {{ $item->roi_anyos }} años
+                                    </p>
+                                </div>
+                            </div>
 
-                {{-- PAGINACIÓN --}}
-                @if($presupuestos->hasPages())
-                <div class="px-8 py-4 bg-gray-50 dark:bg-gray-900/80 border-t border-gray-200 dark:border-gray-700">
-                    <div class="flex items-center justify-between">
-                        <div class="text-sm text-gray-600 dark:text-gray-400">
-                            Mostrando {{ $presupuestos->firstItem() }} - {{ $presupuestos->lastItem() }} de {{ $presupuestos->total() }} resultados
+                            <div class="flex gap-3">
+                                <a href="{{ route('solar.resultados', ['id' => $item->id_resultado]) }}"
+                                   class="flex-1 inline-flex items-center justify-center py-2.5 px-4 rounded-xl border border-gray-300 dark:border-gray-600 text-sm font-semibold text-gray-700 dark:text-gray-200 hover:border-amber-500 hover:text-amber-500 transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                    Ver detalle
+                                </a>
+                                <a href="{{ route('solar.pdf', $item->id_resultado) }}"
+                                   class="flex-1 inline-flex items-center justify-center py-2.5 px-4 rounded-xl bg-amber-600 text-white text-sm font-semibold hover:bg-amber-500 hover:shadow-md transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                    PDF
+                                </a>
+                            </div>
+                        </article>
+                    @empty
+                        <div class="text-center py-16">
+                            <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                                <svg class="w-8 h-8 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2v2m0 16v2m8-10h2M2 12H4m14.95 6.95l1.414 1.414M5.636 5.636L4.222 4.222m14.142-0.001l-1.414 1.415M5.636 18.364l-1.414 1.414M12 7a5 5 0 100 10 5 5 0 000-10z" />
+                                </svg>
+                            </div>
+                            <p class="text-base font-semibold text-gray-900 dark:text-white mb-1">Sin simulaciones todavía</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Crea tu primera simulación solar y aparecerá aquí.</p>
+                            <a href="{{ route('solar.calculadora') }}"
+                               class="inline-flex items-center gap-2 py-2.5 px-6 rounded-xl bg-amber-600 text-white text-sm font-semibold hover:bg-amber-500 transition-all duration-200 ease-in-out">
+                                Ir a la Calculadora
+                            </a>
                         </div>
-                        <div class="flex gap-2">
-                            {{ $presupuestos->links() }}
+                    @endforelse
+                </div>
+
+                <div class="hidden sm:block">
+                    <div class="rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-sm">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="bg-gray-50 dark:bg-gray-700/50">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">ID Ref.</th>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Ubicación</th>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Potencia</th>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Ahorro Est.</th>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">ROI</th>
+                                        <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700">
+                                    @forelse($presupuestos as $item)
+                                        <tr class="hover:bg-amber-50/30 dark:hover:bg-amber-950/10 transition-colors duration-150">
+                                            <td class="px-4 py-4 text-sm font-mono text-gray-500 dark:text-gray-400">#{{ $item->id_resultado }}</td>
+                                            <td class="px-4 py-4 text-sm font-medium text-gray-900 dark:text-white">{{ $item->ubicacion }}</td>
+                                            <td class="px-4 py-4 text-sm font-medium text-gray-900 dark:text-white">{{ number_format($item->potencia_instalacion_kwp, 2) }} kWp</td>
+                                            <td class="px-4 py-4 text-sm font-semibold text-amber-600 dark:text-amber-400">{{ number_format($item->ahorro_estimado_eur, 2) }} €/año</td>
+                                            <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-400">{{ $item->roi_anyos }} años</td>
+                                            <td class="px-4 py-4 text-right">
+                                                <div class="flex items-center justify-end gap-2">
+                                                    <a href="{{ route('solar.resultados', ['id' => $item->id_resultado]) }}"
+                                                       class="inline-flex items-center px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:border-amber-500 hover:text-amber-500 transition-all duration-200 ease-in-out">
+                                                        Ver
+                                                    </a>
+                                                    <a href="{{ route('solar.pdf', $item->id_resultado) }}"
+                                                       class="inline-flex items-center px-3 py-1.5 rounded-lg bg-amber-600 text-white text-xs font-semibold hover:bg-amber-500 hover:shadow-sm transition-all duration-200 ease-in-out">
+                                                        PDF
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="6" class="px-4 py-4">
+                                                <div class="text-center py-16">
+                                                    <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                                                        <svg class="w-8 h-8 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2v2m0 16v2m8-10h2M2 12H4m14.95 6.95l1.414 1.414M5.636 5.636L4.222 4.222m14.142-0.001l-1.414 1.415M5.636 18.364l-1.414 1.414M12 7a5 5 0 100 10 5 5 0 000-10z" />
+                                                        </svg>
+                                                    </div>
+                                                    <p class="text-base font-semibold text-gray-900 dark:text-white mb-1">Sin simulaciones todavía</p>
+                                                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Crea tu primera simulación solar y aparecerá aquí.</p>
+                                                    <a href="{{ route('solar.calculadora') }}"
+                                                       class="inline-flex items-center gap-2 py-2.5 px-6 rounded-xl bg-amber-600 text-white text-sm font-semibold hover:bg-amber-500 transition-all duration-200 ease-in-out">
+                                                        Ir a la Calculadora
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
+
+                @if($presupuestos->hasPages())
+                    <div class="mt-6 flex justify-center">
+                        {{ $presupuestos->links() }}
+                    </div>
                 @endif
 
-                {{-- FOOTER INFORMATIVO --}}
-                <div class="px-8 py-4 bg-gray-50 dark:bg-gray-900/80 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
-                    <div class="flex flex-col">
-                        <span class="text-[10px] text-gray-400 font-mono italic tracking-tight">
-                            Total: {{ $presupuestos->total() }} simulaciones guardadas
-                        </span>
-                    </div>
-                    <div class="flex items-center gap-2 bg-white dark:bg-gray-800 px-3 py-1 rounded-full border border-gray-200 dark:border-gray-700 shadow-sm">
-                        <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-                        <span class="text-[10px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-widest">Historial Activo</span>
-                    </div>
+                <div class="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
+                    Total: {{ $presupuestos->total() }} simulaciones guardadas
                 </div>
-
             </div>
         </div>
     </div>

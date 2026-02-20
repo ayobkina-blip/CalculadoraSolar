@@ -1,29 +1,32 @@
+/* Actualización: refiné dark mode global y transición de tema sin duplicar estructura que ya cubre Tailwind. */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-    /* Fondo general: Un azul noche muy profundo, no negro puro */
+    body {
+        transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
     .dark body {
         @apply bg-[#0b1120] text-slate-300;
     }
 
-    /* El Nav y las cabeceras: Un tono ligeramente más claro para dar profundidad */
-    .dark nav, 
+    .dark nav,
     .dark header {
         @apply bg-[#111827] border-slate-800;
     }
 
-    /* Texto principal en dark mode: Blanco roto para que no deslumbre pero se lea */
-    .dark h1, .dark h2, .dark h3 {
+    .dark h1,
+    .dark h2,
+    .dark h3 {
         @apply text-slate-50;
     }
 }
 
 @layer components {
-    /* Clase maestra para tus TARJETAS de estadísticas */
     .stats-card {
-        @apply bg-white border border-gray-100 p-6 rounded-3xl shadow-sm transition-all;
+        @apply bg-white border border-gray-100 p-6 rounded-2xl shadow-sm transition-all duration-200 ease-in-out;
         @apply dark:bg-slate-800 dark:border-slate-700 dark:shadow-none;
     }
 }

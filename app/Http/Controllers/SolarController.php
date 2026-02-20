@@ -315,6 +315,18 @@ class SolarController extends Controller
     }
 
     /**
+     * Prioridad 1 aplicada: acceso a resultados restringido al usuario autenticado.
+     */
+    public function mostrarResultado($id)
+    {
+        $resultado = Resultado::where('id_resultado', $id)
+            ->where('usuario_fr', Auth::id())
+            ->firstOrFail();
+
+        return view('solarcalc.resultados', compact('resultado'));
+    }
+
+    /**
      * MOTOR DE CÁLCULO FOTOVOLTAICO DINÁMICO (Core Logic v2.0)
      * Procesa los parámetros de entrada y calcula la instalación solar óptima.
      * Utiliza la API de PVGIS para obtener datos precisos de radiación solar.

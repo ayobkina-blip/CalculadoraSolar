@@ -1,10 +1,9 @@
 <?php
+// Prioridad 1 aplicada: autorización de resultados por usuario movida a controlador.
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SolarController;
 use Illuminate\Support\Facades\Route;
-use App\Models\Resultado;
-use Illuminate\Support\Facades\Auth;
 
 // --- Rutas Públicas ---
 Route::get('/', function () {
@@ -29,10 +28,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('/calculadora/procesar', [SolarController::class, 'procesar'])->name('solar.procesar');
 
-    Route::get('/resultados/{id}', function ($id) {
-        $resultado = Resultado::findOrFail($id);
-        return view('solarcalc.resultados', compact('resultado'));
-    })->name('solar.resultados');
+    Route::get('/resultados/{id}', [SolarController::class, 'mostrarResultado'])->name('solar.resultados');
 
     Route::get('/presupuestos', [SolarController::class, 'presupuestos'])->name('solar.presupuestos');
 
