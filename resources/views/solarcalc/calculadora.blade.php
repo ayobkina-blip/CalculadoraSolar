@@ -16,6 +16,23 @@
         </div>
     </x-slot>
 
+    @if(!$isPremiumActive)
+        <div class="mb-6 rounded-2xl border border-amber-300/70 dark:border-amber-700/50 bg-amber-50 dark:bg-amber-900/20 p-4 sm:p-5">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div>
+                    <p class="text-sm font-semibold text-amber-700 dark:text-amber-300">Plan Free activo</p>
+                    <p class="text-sm text-amber-700/90 dark:text-amber-300/90 mt-0.5">
+                        Simulaciones restantes: <span class="font-bold">{{ $remainingSimulations }}</span> de 3.
+                    </p>
+                </div>
+                <a href="{{ route('premium.index', ['reason' => 'simulation_quota']) }}"
+                   class="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold transition">
+                    Ver Premium
+                </a>
+            </div>
+        </div>
+    @endif
+
     {{-- Errores de validación --}}
     @if($errors->any())
         <div class="mb-6 rounded-xl border border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/20 p-4">

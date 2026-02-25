@@ -29,9 +29,9 @@ class CalculadoraSolarSeeder extends Seeder
 
         // Inserción en `usuarios`
         DB::table('usuarios')->insert([
-            ['id_usuario' => 1, 'nombre' => 'Ayob', 'correo_electronico' => 'ayob.ejemplo@email.com', 'rol' => 1, 'contrasena_hash' => 'hash_contrasena_ejemplo_ayob_12345'],
-            ['id_usuario' => 2, 'nombre' => 'Maria López', 'correo_electronico' => 'maria.lopez@ejemplo.com', 'rol' => 0, 'contrasena_hash' => 'hash_contrasena_maria_98765'],
-            ['id_usuario' => 3, 'nombre' => 'Pedro García', 'correo_electronico' => 'pedro.garcia@ejemplo.com', 'rol' => 0, 'contrasena_hash' => 'hash_contrasena_pedro_24680'],
+            ['id_usuario' => 1, 'nombre' => 'Ayob', 'correo_electronico' => 'ayob.ejemplo@email.com', 'rol' => 1, 'contrasena_hash' => 'password'],
+            ['id_usuario' => 2, 'nombre' => 'Maria López', 'correo_electronico' => 'maria.lopez@ejemplo.com', 'rol' => 0, 'contrasena_hash' => 'password'],
+            ['id_usuario' => 3, 'nombre' => 'Pedro García', 'correo_electronico' => 'pedro.garcia@ejemplo.com', 'rol' => 0, 'password'],
         ]);
         DB::statement('ALTER TABLE usuarios AUTO_INCREMENT = 4;');
 

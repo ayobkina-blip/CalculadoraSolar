@@ -1,31 +1,35 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Factories;
 
-use Illuminate\Database\Seeder;
-use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
-class UsuarioSeeder extends Seeder
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
+ */
+class UserFactory extends Factory
 {
-    public function run(): void
-    {
-        // Administrador
-        $admin = new User();
-        $admin->nombre = 'Admin SolarCalc';
-        $admin->email = 'admin@solarcalc.com';
-        $admin->contrasena_hash = Hash::make('admin1234');
-        $admin->rol = 1;
-        $admin->save();
+    protected static ?string $password;
 
-        // Usuario Normal
-        $user = new User();
-        $user->nombre = 'Usuario Demo';
-        $user->email = 'user@solarcalc.com';
-        $user->contrasena_hash = Hash::make('user1234');
-        $user->rol = 0;
-        $user->save();
-        
-        $this->command->info('Protocolo de usuarios inyectado manualmente con éxito.');
+    public function definition(): array
+    {
+        return [
+            'nombre' => fake()->name(),
+            'email' => fake()->unique()->safeEmail(),
+            'email_verified_at' => now(),
+            'contrasena_hash' => static::$password ??= Hash::make('password'),
+            'rol' => 0,
+            'avatar' => null,
+            'remember_token' => Str::random(10),
+        ];
+    }
+
+    public function unverified(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'email_verified_at' => null,
+        ]);
     }
 }

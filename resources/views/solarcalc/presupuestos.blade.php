@@ -25,6 +25,53 @@
                     </a>
                 </div>
 
+                <div class="mb-6 grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40 p-4">
+                        <p class="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 font-semibold">Estado de suscripción</p>
+                        <div class="mt-2 flex items-center gap-2">
+                            @if($currentPlan->code !== 'free')
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 text-xs font-bold uppercase">Premium</span>
+                            @else
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold uppercase">Free</span>
+                            @endif
+                            <span class="text-sm font-semibold text-gray-800 dark:text-gray-200">{{ $currentPlan->name }}</span>
+                        </div>
+                        <p class="text-sm text-gray-600 dark:text-gray-300 mt-2">
+                            Simulaciones restantes:
+                            <span class="font-bold">{{ $remainingSimulations === null ? 'Ilimitadas' : $remainingSimulations }}</span>
+                        </p>
+                    </div>
+
+                    <div class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
+                        <p class="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 font-semibold mb-2">Herramientas premium</p>
+                        @if($canCompare)
+                            <form method="POST" action="{{ route('premium.compare') }}" class="space-y-2">
+                                @csrf
+                                <select name="resultados[]" multiple size="4" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                    @foreach($presupuestos as $item)
+                                        <option value="{{ $item->id_resultado }}">#{{ $item->id_resultado }} · {{ $item->ubicacion }} · {{ number_format($item->potencia_instalacion_kwp, 2) }} kWp</option>
+                                    @endforeach
+                                </select>
+                                <div class="flex gap-2">
+                                    <button type="submit" class="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-amber-600 text-white text-xs font-semibold hover:bg-amber-500 transition-all">
+                                        Comparar (2-3)
+                                    </button>
+                                    @if($canExportCsv)
+                                        <a href="{{ route('premium.export.csv') }}" class="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-slate-800 dark:bg-slate-100 dark:text-slate-900 text-white text-xs font-semibold hover:opacity-90 transition-all">
+                                            Exportar CSV
+                                        </a>
+                                    @endif
+                                </div>
+                            </form>
+                        @else
+                            <div class="rounded-xl border border-dashed border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/20 p-3">
+                                <p class="text-xs text-amber-700 dark:text-amber-300 font-semibold">Comparador y CSV bloqueados en plan Free.</p>
+                                <a href="{{ route('premium.index', ['reason' => 'result_compare']) }}" class="inline-flex mt-2 px-3 py-2 rounded-lg bg-amber-600 text-white text-xs font-semibold hover:bg-amber-500 transition">Desbloquear Premium</a>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
                 <form method="GET" action="{{ route('solar.presupuestos') }}" class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 sm:p-5 shadow-sm mb-6">
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 items-end">
                         <div class="sm:col-span-2">
@@ -106,10 +153,17 @@
                                    class="flex-1 inline-flex items-center justify-center py-2.5 px-4 rounded-xl border border-gray-300 dark:border-gray-600 text-sm font-semibold text-gray-700 dark:text-gray-200 hover:border-amber-500 hover:text-amber-500 transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-amber-500">
                                     Ver detalle
                                 </a>
-                                <a href="{{ route('solar.pdf', $item->id_resultado) }}"
-                                   class="flex-1 inline-flex items-center justify-center py-2.5 px-4 rounded-xl bg-amber-600 text-white text-sm font-semibold hover:bg-amber-500 hover:shadow-md transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-amber-500">
-                                    PDF
-                                </a>
+                                @if($canDownloadPdf)
+                                    <a href="{{ route('solar.pdf', $item->id_resultado) }}"
+                                       class="flex-1 inline-flex items-center justify-center py-2.5 px-4 rounded-xl bg-amber-600 text-white text-sm font-semibold hover:bg-amber-500 hover:shadow-md transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                        PDF
+                                    </a>
+                                @else
+                                    <a href="{{ route('premium.index', ['reason' => 'pdf_export']) }}"
+                                       class="flex-1 inline-flex items-center justify-center py-2.5 px-4 rounded-xl border border-amber-300 text-amber-700 dark:text-amber-300 text-sm font-semibold hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                        Premium PDF
+                                    </a>
+                                @endif
                             </div>
                         </article>
                     @empty
@@ -157,10 +211,17 @@
                                                        class="inline-flex items-center px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:border-amber-500 hover:text-amber-500 transition-all duration-200 ease-in-out">
                                                         Ver
                                                     </a>
-                                                    <a href="{{ route('solar.pdf', $item->id_resultado) }}"
-                                                       class="inline-flex items-center px-3 py-1.5 rounded-lg bg-amber-600 text-white text-xs font-semibold hover:bg-amber-500 hover:shadow-sm transition-all duration-200 ease-in-out">
-                                                        PDF
-                                                    </a>
+                                                    @if($canDownloadPdf)
+                                                        <a href="{{ route('solar.pdf', $item->id_resultado) }}"
+                                                           class="inline-flex items-center px-3 py-1.5 rounded-lg bg-amber-600 text-white text-xs font-semibold hover:bg-amber-500 hover:shadow-sm transition-all duration-200 ease-in-out">
+                                                            PDF
+                                                        </a>
+                                                    @else
+                                                        <a href="{{ route('premium.index', ['reason' => 'pdf_export']) }}"
+                                                           class="inline-flex items-center px-3 py-1.5 rounded-lg border border-amber-300 text-amber-700 dark:text-amber-300 text-xs font-semibold hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-all duration-200 ease-in-out">
+                                                            Premium PDF
+                                                        </a>
+                                                    @endif
                                                 </div>
                                             </td>
                                         </tr>

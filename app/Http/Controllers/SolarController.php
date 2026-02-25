@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Resultado;
+use App\Models\SubscriptionPlan;
+use App\Services\SubscriptionAccessService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -62,9 +64,31 @@ class SolarController extends Controller
         $todosLosPresupuestos = $query->paginate(15)->withQueryString();
         
         // Usuarios con conteo de resultados
-        $usuarios = User::withCount('resultados')->get();
+        $usuarios = User::withCount('resultados')
+            ->with(['activeSubscription.plan'])
+            ->get();
 
-        return view('solarcalc.admin', compact('todosLosPresupuestos', 'usuarios'));
+        $subscriptionPlans = SubscriptionPlan::query()
+            ->whereIn('code', [
+                SubscriptionPlan::CODE_PREMIUM_MONTHLY,
+                SubscriptionPlan::CODE_PREMIUM_YEARLY,
+            ])
+            ->where('is_active', true)
+            ->orderByRaw("CASE code WHEN 'premium_monthly' THEN 1 WHEN 'premium_yearly' THEN 2 ELSE 3 END")
+            ->get();
+
+        return view('solarcalc.admin', compact('todosLosPresupuestos', 'usuarios', 'subscriptionPlans'));
+    }
+
+    public function calculadora(Request $request, SubscriptionAccessService $subscriptionAccess): View
+    {
+        $user = $request->user();
+
+        return view('solarcalc.calculadora', [
+            'remainingSimulations' => $subscriptionAccess->remainingSimulations($user),
+            'isPremiumActive' => $subscriptionAccess->isPremiumActive($user),
+            'currentPlan' => $subscriptionAccess->getCurrentPlan($user),
+        ]);
     }
 
     /**
@@ -106,8 +130,17 @@ class SolarController extends Controller
      * Muestra la vista de estadísticas generales del sistema
      * Calcula métricas globales de todas las simulaciones realizadas.
      */
-    public function estadisticas()
+    public function estadisticas(Request $request, SubscriptionAccessService $subscriptionAccess)
     {
+        $user = $request->user();
+
+        if (!$subscriptionAccess->hasFeature($user, SubscriptionPlan::FEATURE_ADVANCED_STATS)) {
+            return view('solarcalc.estadisticas-teaser', [
+                'remainingSimulations' => $subscriptionAccess->remainingSimulations($user),
+                'currentPlan' => $subscriptionAccess->getCurrentPlan($user),
+            ]);
+        }
+
         // Cálculos globales para los indicadores
         $totalKwhGlobal = Resultado::sum('produccion_anual_kwh');
         $totalPresupuestos = Resultado::count();
@@ -179,7 +212,7 @@ class SolarController extends Controller
     /**
      * Listado de presupuestos del usuario con paginación y filtros
      */
-    public function presupuestos(Request $request)
+    public function presupuestos(Request $request, SubscriptionAccessService $subscriptionAccess)
     {
         $user = auth()->user();
         
@@ -213,7 +246,14 @@ class SolarController extends Controller
         // Paginación (10 por página)
         $presupuestos = $query->paginate(10)->withQueryString();
         
-        return view('solarcalc.presupuestos', compact('presupuestos'));
+        return view('solarcalc.presupuestos', [
+            'presupuestos' => $presupuestos,
+            'canDownloadPdf' => $subscriptionAccess->hasFeature($user, SubscriptionPlan::FEATURE_PDF_EXPORT),
+            'canCompare' => $subscriptionAccess->hasFeature($user, SubscriptionPlan::FEATURE_RESULT_COMPARE),
+            'canExportCsv' => $subscriptionAccess->hasFeature($user, SubscriptionPlan::FEATURE_CSV_EXPORT),
+            'remainingSimulations' => $subscriptionAccess->remainingSimulations($user),
+            'currentPlan' => $subscriptionAccess->getCurrentPlan($user),
+        ]);
     }
     
     /**
@@ -317,13 +357,17 @@ class SolarController extends Controller
     /**
      * Prioridad 1 aplicada: acceso a resultados restringido al usuario autenticado.
      */
-    public function mostrarResultado($id)
+    public function mostrarResultado($id, SubscriptionAccessService $subscriptionAccess)
     {
         $resultado = Resultado::where('id_resultado', $id)
             ->where('usuario_fr', Auth::id())
             ->firstOrFail();
 
-        return view('solarcalc.resultados', compact('resultado'));
+        return view('solarcalc.resultados', [
+            'resultado' => $resultado,
+            'canDownloadPdf' => $subscriptionAccess->hasFeature(auth()->user(), SubscriptionPlan::FEATURE_PDF_EXPORT),
+            'currentPlan' => $subscriptionAccess->getCurrentPlan(auth()->user()),
+        ]);
     }
 
     /**
@@ -331,8 +375,15 @@ class SolarController extends Controller
      * Procesa los parámetros de entrada y calcula la instalación solar óptima.
      * Utiliza la API de PVGIS para obtener datos precisos de radiación solar.
      */
-    public function procesar(Request $request)
+    public function procesar(Request $request, SubscriptionAccessService $subscriptionAccess)
     {
+        if (!$subscriptionAccess->canCreateSimulation($request->user())) {
+            return redirect()
+                ->route('premium.index', ['reason' => 'simulation_quota'])
+                ->with('premium_reason', 'simulation_quota')
+                ->with('error', 'Has alcanzado el límite gratuito de 3 simulaciones.');
+        }
+
         // Validación mejorada con mensajes personalizados en español
         $request->validate([
             'consumo' => 'required|numeric|min:50|max:10000',
@@ -448,8 +499,15 @@ class SolarController extends Controller
     /**
      * GENERACIÓN DE INFORME TÉCNICO PDF
      */
-    public function descargarPDF($id)
+    public function descargarPDF($id, SubscriptionAccessService $subscriptionAccess)
     {
+        if (!$subscriptionAccess->hasFeature(auth()->user(), SubscriptionPlan::FEATURE_PDF_EXPORT)) {
+            return redirect()
+                ->route('premium.index', ['reason' => SubscriptionPlan::FEATURE_PDF_EXPORT])
+                ->with('premium_reason', SubscriptionPlan::FEATURE_PDF_EXPORT)
+                ->with('error', 'La exportación PDF forma parte del plan Premium.');
+        }
+
         $resultado = Resultado::where('id_resultado', $id)
             ->where('usuario_fr', Auth::id())
             ->firstOrFail();

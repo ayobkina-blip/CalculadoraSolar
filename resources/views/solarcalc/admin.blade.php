@@ -316,7 +316,15 @@
         {{-- ══════════════════════════════════════
              BLOQUE 3 — CONTROL DE USUARIOS
         ══════════════════════════════════════ --}}
-        <div x-data="{ openModal: false, targetUser: '', targetId: '', targetAction: '' }"
+        <div x-data="{
+                openModal: false,
+                targetUser: '',
+                targetId: '',
+                targetAction: '',
+                openPremiumModal: false,
+                premiumTargetUser: '',
+                premiumTargetId: ''
+             }"
              class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
 
             <div class="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-200 dark:border-gray-700">
@@ -345,21 +353,43 @@
                                 @if($usuario->rol == 1)
                                     <span class="inline-flex items-center mt-1 px-2 py-0.5 rounded-lg bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-[10px] font-bold uppercase">Admin</span>
                                 @endif
+                                @php
+                                    $planCode = $usuario->activeSubscription?->plan?->code;
+                                    $planName = $usuario->activeSubscription?->plan?->name;
+                                @endphp
+                                @if($usuario->rol == 1)
+                                    <span class="inline-flex items-center mt-1 px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-[10px] font-bold uppercase">Bypass</span>
+                                @elseif($planCode)
+                                    <span class="inline-flex items-center mt-1 px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-300 text-[10px] font-bold uppercase">{{ $planName }}</span>
+                                @else
+                                    <span class="inline-flex items-center mt-1 px-2 py-0.5 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-[10px] font-bold uppercase">Free</span>
+                                @endif
                             </div>
                         </div>
 
                         @if(auth()->id() !== ($usuario->id_usuario ?? $usuario->id))
-                            <button type="button"
-                                @click="openModal = true;
-                                        targetUser = '{{ $usuario->nombre ?? $usuario->name }}';
-                                        targetId = '{{ $usuario->id_usuario ?? $usuario->id }}';
-                                        targetAction = '{{ $usuario->rol == 1 ? 'degradar' : 'promocionar' }}'"
-                                class="flex-shrink-0 inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2
-                                    {{ $usuario->rol == 1
-                                        ? 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:border-red-400 hover:text-red-500'
-                                        : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:border-emerald-400 hover:text-emerald-500' }}">
-                                {{ $usuario->rol == 1 ? 'Degradar' : 'Promover' }}
-                            </button>
+                            <div class="flex-shrink-0 flex flex-col gap-2">
+                                <button type="button"
+                                    @click="openModal = true;
+                                            targetUser = '{{ $usuario->nombre ?? $usuario->name }}';
+                                            targetId = '{{ $usuario->id_usuario ?? $usuario->id }}';
+                                            targetAction = '{{ $usuario->rol == 1 ? 'degradar' : 'promocionar' }}'"
+                                    class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2
+                                        {{ $usuario->rol == 1
+                                            ? 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:border-red-400 hover:text-red-500'
+                                            : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:border-emerald-400 hover:text-emerald-500' }}">
+                                    {{ $usuario->rol == 1 ? 'Degradar' : 'Promover' }}
+                                </button>
+                                @if($usuario->rol != 1)
+                                    <button type="button"
+                                        @click="openPremiumModal = true;
+                                                premiumTargetUser = '{{ $usuario->nombre ?? $usuario->name }}';
+                                                premiumTargetId = '{{ $usuario->id_usuario ?? $usuario->id }}'"
+                                        class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold border border-amber-300 text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
+                                        Premium
+                                    </button>
+                                @endif
+                            </div>
                         @else
                             <span class="flex-shrink-0 flex items-center gap-1.5 text-[10px] font-bold uppercase text-emerald-500 tracking-wide">
                                 <span class="relative flex h-2 w-2">
@@ -380,6 +410,7 @@
                         <tr class="bg-gray-50 dark:bg-gray-700/40">
                             <th class="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Usuario</th>
                             <th class="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Rol actual</th>
+                            <th class="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Suscripción</th>
                             <th class="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-right">Acción</th>
                         </tr>
                     </thead>
@@ -416,22 +447,53 @@
                                         </span>
                                     @endif
                                 </td>
+                                <td class="px-6 py-4">
+                                    @if($usuario->rol == 1)
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-600">
+                                            Bypass Admin
+                                        </span>
+                                    @elseif($usuario->activeSubscription?->plan)
+                                        <div class="flex flex-col gap-1">
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50">
+                                                {{ $usuario->activeSubscription->plan->name }}
+                                            </span>
+                                            <span class="text-[10px] text-gray-500 dark:text-gray-400">
+                                                Hasta {{ optional($usuario->activeSubscription->ends_at)->format('d/m/Y') ?? 'sin fin' }}
+                                            </span>
+                                        </div>
+                                    @else
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600">
+                                            Free
+                                        </span>
+                                    @endif
+                                </td>
                                 <td class="px-6 py-4 text-right">
                                     @if(auth()->id() !== ($usuario->id_usuario ?? $usuario->id))
-                                        <button type="button"
-                                            @click="openModal = true;
-                                                    targetUser = '{{ $usuario->nombre ?? $usuario->name }}';
-                                                    targetId = '{{ $usuario->id_usuario ?? $usuario->id }}';
-                                                    targetAction = '{{ $usuario->rol == 1 ? 'degradar' : 'promocionar' }}'"
-                                            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2
-                                                {{ $usuario->rol == 1
-                                                    ? 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:border-red-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20'
-                                                    : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:border-emerald-400 hover:text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20' }}">
-                                            {{ $usuario->rol == 1 ? 'Degradar' : 'Promocionar' }}
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
-                                        </button>
+                                        <div class="inline-flex items-center gap-2">
+                                            <button type="button"
+                                                @click="openModal = true;
+                                                        targetUser = '{{ $usuario->nombre ?? $usuario->name }}';
+                                                        targetId = '{{ $usuario->id_usuario ?? $usuario->id }}';
+                                                        targetAction = '{{ $usuario->rol == 1 ? 'degradar' : 'promocionar' }}'"
+                                                class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2
+                                                    {{ $usuario->rol == 1
+                                                        ? 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:border-red-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20'
+                                                        : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:border-emerald-400 hover:text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20' }}">
+                                                {{ $usuario->rol == 1 ? 'Degradar' : 'Promocionar' }}
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
+                                            </button>
+                                            @if($usuario->rol != 1)
+                                                <button type="button"
+                                                    @click="openPremiumModal = true;
+                                                            premiumTargetUser = '{{ $usuario->nombre ?? $usuario->name }}';
+                                                            premiumTargetId = '{{ $usuario->id_usuario ?? $usuario->id }}'"
+                                                    class="inline-flex items-center px-4 py-2 rounded-xl text-xs font-semibold border border-amber-300 text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
+                                                    Premium
+                                                </button>
+                                            @endif
+                                        </div>
                                     @else
                                         <span class="flex items-center justify-end gap-2 text-xs font-semibold text-emerald-500 uppercase tracking-wide">
                                             <span class="relative flex h-2 w-2">
@@ -518,6 +580,93 @@
                                     Cancelar
                                 </button>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            {{-- ══════════════════════════════════════
+                 MODAL GESTIÓN DE PREMIUM
+            ══════════════════════════════════════ --}}
+            <template x-teleport="body">
+                <div x-show="openPremiumModal"
+                     class="fixed inset-0 z-[99] flex items-end sm:items-center justify-center p-4"
+                     x-cloak>
+
+                    <div x-show="openPremiumModal"
+                         x-transition:enter="ease-out duration-300"
+                         x-transition:enter-start="opacity-0"
+                         x-transition:enter-end="opacity-100"
+                         x-transition:leave="ease-in duration-200"
+                         x-transition:leave-start="opacity-100"
+                         x-transition:leave-end="opacity-0"
+                         @click="openPremiumModal = false"
+                         class="absolute inset-0 bg-gray-950/60 backdrop-blur-sm"></div>
+
+                    <div x-show="openPremiumModal"
+                         x-transition:enter="ease-out duration-300"
+                         x-transition:enter-start="opacity-0 translate-y-4 sm:scale-95"
+                         x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                         x-transition:leave="ease-in duration-200"
+                         x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                         x-transition:leave-end="opacity-0 translate-y-4 sm:scale-95"
+                         class="relative w-full max-w-lg bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-2xl p-6 sm:p-8">
+
+                        <button @click="openPremiumModal = false"
+                                class="absolute top-4 right-4 p-2 rounded-xl text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-gray-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white">Gestionar Premium</h3>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Usuario: <span class="font-semibold text-gray-900 dark:text-white" x-text="premiumTargetUser"></span></p>
+
+                        <div class="mt-6 space-y-4">
+                            <form :action="'{{ url('admin/usuario') }}/' + premiumTargetId + '/premium'" method="POST" class="space-y-4">
+                                @csrf
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1.5">Plan</label>
+                                <select name="plan_code" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                    @foreach($subscriptionPlans as $plan)
+                                        <option value="{{ $plan->code }}">{{ $plan->name }} ({{ number_format($plan->price_cents / 100, 2) }}€)</option>
+                                    @endforeach
+                                    <option value="free">Free</option>
+                                </select>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1.5">Inicio (opcional)</label>
+                                    <input type="date" name="starts_at" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1.5">Fin (opcional)</label>
+                                    <input type="date" name="ends_at" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1.5">Notas</label>
+                                <textarea name="notes" rows="3" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" placeholder="Motivo interno de la activación/cambio"></textarea>
+                            </div>
+
+                            <div class="flex flex-col sm:flex-row gap-2 pt-2">
+                                <button type="submit" class="flex-1 py-2.5 px-4 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-sm font-semibold transition-all">
+                                    Guardar plan
+                                </button>
+                                <button @click="openPremiumModal = false" type="button" class="w-full sm:w-auto py-2.5 px-4 rounded-xl border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 text-sm font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition-all">
+                                    Cerrar
+                                </button>
+                            </div>
+                            </form>
+
+                            <form :action="'{{ url('admin/usuario') }}/' + premiumTargetId + '/premium/cancel'" method="POST">
+                                @csrf
+                                <button type="submit" class="w-full py-2.5 px-4 rounded-xl border border-red-300 text-red-600 dark:text-red-300 text-sm font-semibold hover:bg-red-50 dark:hover:bg-red-900/20 transition-all">
+                                    Cancelar premium
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>

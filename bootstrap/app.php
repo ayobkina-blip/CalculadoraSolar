@@ -14,6 +14,8 @@ return Application::configure(basePath: dirname(__DIR__))
         // Registrar middleware personalizado para control de acceso administrativo
         $middleware->alias([
             'admin' => \App\Http\Middleware\EsAdmin::class,
+            'premium.feature' => \App\Http\Middleware\EnsurePremiumFeature::class,
+            'simulation.quota' => \App\Http\Middleware\EnsureSimulationQuota::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

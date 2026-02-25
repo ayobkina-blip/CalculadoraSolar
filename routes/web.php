@@ -3,6 +3,9 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SolarController;
+use App\Http\Controllers\PremiumController;
+use App\Http\Controllers\AdminSubscriptionController;
+use App\Http\Controllers\UsuarioController;
 use Illuminate\Support\Facades\Route;
 
 // --- Rutas Públicas ---
@@ -22,11 +25,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     
     // 3. Calculadora Solar e Ingeniería
-    Route::get('/calculadora', function () {
-        return view('solarcalc.calculadora');
-    })->name('solar.calculadora');
+    Route::get('/calculadora', [SolarController::class, 'calculadora'])->name('solar.calculadora');
 
-    Route::post('/calculadora/procesar', [SolarController::class, 'procesar'])->name('solar.procesar');
+    Route::post('/calculadora/procesar', [SolarController::class, 'procesar'])
+        ->middleware('simulation.quota')
+        ->name('solar.procesar');
 
     Route::get('/resultados/{id}', [SolarController::class, 'mostrarResultado'])->name('solar.resultados');
 
@@ -35,7 +38,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // 4. Estadísticas e Informes
     Route::get('/estadisticas', [SolarController::class, 'estadisticas'])->name('solar.estadisticas');
     
-    Route::get('/solar/descargar-pdf/{id}', [SolarController::class, 'descargarPDF'])->name('solar.pdf');
+    Route::get('/solar/descargar-pdf/{id}', [SolarController::class, 'descargarPDF'])
+        ->middleware('premium.feature:pdf_export')
+        ->name('solar.pdf');
+
+    Route::get('/premium', [PremiumController::class, 'index'])->name('premium.index');
+    Route::post('/premium/compare', [PremiumController::class, 'compare'])
+        ->middleware('premium.feature:result_compare')
+        ->name('premium.compare');
+    Route::get('/premium/export/csv', [PremiumController::class, 'exportCsv'])
+        ->middleware('premium.feature:csv_export')
+        ->name('premium.export.csv');
 
     // 5. Panel de Administración (Solo para Rol = 1) - Protegido con middleware
     Route::prefix('admin')->middleware('admin')->group(function () {
@@ -44,8 +57,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/usuarios', [UsuarioController::class, 'index'])->name('admin.usuarios');
         Route::post('/resultado/{id}/estado', [SolarController::class, 'cambiarEstado'])->name('admin.cambiarEstado');
         Route::get('/estadisticas', [SolarController::class, 'adminEstadisticas'])->name('admin.estadisticas');
-        Route::get('/usuarios', [UsuarioController::class, 'index'])->name('admin.usuarios');
         Route::get('/exportar/csv', [SolarController::class, 'exportarCSV'])->name('admin.exportar.csv');
+        Route::post('/usuario/{id}/premium', [AdminSubscriptionController::class, 'update'])->name('admin.premium.update');
+        Route::post('/usuario/{id}/premium/cancel', [AdminSubscriptionController::class, 'cancel'])->name('admin.premium.cancel');
     });
 });
 

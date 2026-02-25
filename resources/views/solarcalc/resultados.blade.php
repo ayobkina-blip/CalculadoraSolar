@@ -45,16 +45,26 @@
 
                 {{-- Acciones / Descargas --}}
                 <div class="mt-10 pt-6 border-t border-gray-100 dark:border-gray-700">
-                    <a href="{{ route('solar.pdf', $resultado->id_resultado) }}"
-                        class="inline-flex items-center px-6 py-3 md:px-8 md:py-4 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-lg font-black text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white transition-all shadow-md active:scale-95 group">
+                    @if($canDownloadPdf)
+                        <a href="{{ route('solar.pdf', $resultado->id_resultado) }}"
+                            class="inline-flex items-center px-6 py-3 md:px-8 md:py-4 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-lg font-black text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white transition-all shadow-md active:scale-95 group">
 
-                        <svg class="w-5 h-5 mr-3 transition-transform group-hover:translate-y-0.5" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                        </svg>
-                        Descargar Presupuesto en PDF
-                    </a>
+                            <svg class="w-5 h-5 mr-3 transition-transform group-hover:translate-y-0.5" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                            Descargar Presupuesto en PDF
+                        </a>
+                    @else
+                        <div class="space-y-3">
+                            <a href="{{ route('premium.index', ['reason' => 'pdf_export']) }}"
+                                class="inline-flex items-center px-6 py-3 md:px-8 md:py-4 bg-amber-600 border border-transparent rounded-lg font-black text-xs text-white uppercase tracking-widest hover:bg-amber-500 transition-all shadow-md active:scale-95">
+                                Desbloquear PDF con Premium
+                            </a>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Plan actual: {{ $currentPlan->name }} · La exportación PDF requiere Premium.</p>
+                        </div>
+                    @endif
                 </div>
 
             </div>

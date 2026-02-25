@@ -8,6 +8,7 @@
             ['route' => 'solar.calculadora', 'label' => 'Calculadora'],
             ['route' => 'solar.presupuestos', 'label' => 'Mis Proyectos'],
             ['route' => 'solar.estadisticas', 'label' => 'Métricas'],
+            ['route' => 'premium.index', 'label' => 'Premium'],
         ];
     @endphp
 
