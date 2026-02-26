@@ -17,7 +17,7 @@
                 
                 {{-- COLUMNA IZQUIERDA: TARJETA DE IDENTIDAD --}}
                 <div class="md:col-span-4 lg:col-span-4 space-y-6">
-                    <div class="bg-white dark:bg-slate-900 rounded-2xl md:rounded-[2.5rem] border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm overflow-hidden relative group">
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl md:rounded-[2.5rem] border-t-4 border-blue-900 border-x border-b border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm overflow-hidden relative group">
                         {{-- Decoración sutil --}}
                         <div class="absolute -top-20 -right-20 sm:-top-24 sm:-right-24 w-40 h-40 sm:w-48 sm:h-48 bg-amber-500/5 rounded-full blur-3xl group-hover:bg-amber-500/10 transition-colors duration-500"></div>
                         
@@ -41,8 +41,8 @@
                         <div class="mt-8 sm:mt-10 pt-6 sm:pt-8 border-t border-slate-100 dark:border-slate-800 space-y-5 sm:space-y-6">
                             <div class="flex items-center justify-between">
                                 <div class="flex flex-col">
-                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Cálculos Totales</span>
-                                    <span class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white leading-tight mt-1">{{ $totalSimulaciones ?? '0' }}</span>
+                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Cálculos Totales</span>
+                                    <span class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white leading-tight">{{ $totalSimulaciones ?? '0' }}</span>
                                 </div>
                                 <div class="w-10 h-10 sm:w-12 sm:h-12 bg-slate-50 dark:bg-slate-800 rounded-xl sm:rounded-2xl flex items-center justify-center text-slate-400">
                                     <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
@@ -51,8 +51,8 @@
                             
                             <div class="flex items-center justify-between">
                                 <div class="flex flex-col">
-                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Ahorro Medio</span>
-                                    <span class="text-xl sm:text-2xl font-black text-amber-500 leading-tight mt-1">{{ number_format($ahorroMedio ?? 0, 0) }}€</span>
+                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Ahorro Medio</span>
+                                    <span class="text-xl sm:text-2xl font-black text-amber-500 leading-tight">{{ number_format($ahorroMedio ?? 0, 0) }}€</span>
                                 </div>
                                 <div class="w-10 h-10 sm:w-12 sm:h-12 bg-amber-50 dark:bg-amber-900/20 rounded-xl sm:rounded-2xl flex items-center justify-center text-amber-500">
                                     <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>

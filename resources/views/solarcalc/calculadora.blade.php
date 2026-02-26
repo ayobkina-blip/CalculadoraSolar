@@ -61,15 +61,15 @@
             {{-- ══════════════════════════════════════
                  COLUMNA IZQUIERDA — Mapa
             ══════════════════════════════════════ --}}
-            <div class="flex-1 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden flex flex-col min-h-[520px] lg:min-h-[680px]">
+            <div class="flex-1 bg-white dark:bg-gray-800 rounded-2xl border-t-4 border-amber-500 border-x border-b border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden flex flex-col min-h-[520px] lg:min-h-[680px]">
 
                 {{-- Cabecera del panel mapa --}}
                 <div class="px-4 sm:px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between gap-3 flex-shrink-0">
                     <div class="flex items-center gap-3">
                         <div class="w-1.5 h-6 bg-amber-500 rounded-full"></div>
                         <div>
-                            <h3 class="text-sm font-bold text-gray-900 dark:text-white">1. Geoposicionamiento</h3>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Busca tu dirección o haz clic en el mapa</p>
+                            <h3 class="text-[10px] font-black text-gray-700 dark:text-gray-300 uppercase tracking-widest leading-none">1. Geoposicionamiento</h3>
+                            <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-1 uppercase tracking-wider font-bold">Ubicación y Coordenadas</p>
                         </div>
                     </div>
                     <span class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 text-[10px] font-bold uppercase tracking-wide border border-amber-200 dark:border-amber-800/50">
@@ -142,14 +142,14 @@
             {{-- ══════════════════════════════════════
                  COLUMNA DERECHA — Parámetros
             ══════════════════════════════════════ --}}
-            <div class="w-full lg:w-[400px] xl:w-[420px] bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col">
+            <div class="w-full lg:w-[400px] xl:w-[420px] bg-white dark:bg-gray-800 rounded-2xl border-t-4 border-amber-600 border-x border-b border-gray-200 dark:border-gray-700 shadow-sm flex flex-col">
 
                 <div class="px-4 sm:px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex-shrink-0">
                     <div class="flex items-center gap-3">
                         <div class="w-1.5 h-6 bg-amber-500 rounded-full"></div>
                         <div>
-                            <h3 class="text-sm font-bold text-gray-900 dark:text-white">2. Parámetros técnicos</h3>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Configura tu instalación solar</p>
+                            <h3 class="text-[10px] font-black text-gray-700 dark:text-gray-300 uppercase tracking-widest leading-none">2. Parámetros técnicos</h3>
+                            <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-1 uppercase tracking-wider font-bold">Simulación y Dimensionamiento</p>
                         </div>
                     </div>
                 </div>

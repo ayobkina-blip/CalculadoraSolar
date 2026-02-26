@@ -80,7 +80,7 @@
         {{-- ══════════════════════════════════════
              BLOQUE 2 — AUDITORÍA DE SIMULACIONES
         ══════════════════════════════════════ --}}
-        <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl border-t-4 border-red-600 border-x border-b border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
 
             {{-- Cabecera del bloque --}}
             <div class="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-200 dark:border-gray-700">
@@ -88,8 +88,8 @@
                     <div class="flex items-center gap-3">
                         <div class="w-1.5 h-6 bg-red-600 rounded-full"></div>
                         <div>
-                            <h3 class="text-base font-bold text-gray-900 dark:text-white">Auditoría de Simulaciones</h3>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Todas las simulaciones del sistema</p>
+                            <h3 class="text-[10px] font-black text-gray-700 dark:text-gray-300 uppercase tracking-widest leading-none">Auditoría de Simulaciones</h3>
+                            <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-1 uppercase tracking-wider font-bold">Todas las simulaciones del sistema</p>
                         </div>
                     </div>
                     <a href="{{ route('admin.exportar.csv', request()->all()) }}"
@@ -188,17 +188,9 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-xs text-gray-500 dark:text-gray-400">Potencia instalación</p>
-                                <p class="text-sm font-bold text-gray-900 dark:text-white">{{ number_format($item->potencia_instalacion_kwp, 2) }} kWp</p>
+                                 <p class="text-sm font-bold text-gray-900 dark:text-white">{{ number_format($item->potencia_instalacion_kwp, 2) }} kWp</p>
                             </div>
-                            <form action="{{ route('admin.cambiarEstado', $item->id_resultado) }}" method="POST">
-                                @csrf
-                                <select name="estado" onchange="this.form.submit()"
-                                        class="text-xs font-semibold py-2 pl-3 pr-8 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-red-500 transition cursor-pointer">
-                                    <option value="pendiente" {{ ($item->estado ?? 'pendiente') == 'pendiente' ? 'selected' : '' }}>Revisar</option>
-                                    <option value="aprobado"  {{ ($item->estado ?? '') == 'aprobado'  ? 'selected' : '' }}>Aprobar</option>
-                                    <option value="rechazado" {{ ($item->estado ?? '') == 'rechazado' ? 'selected' : '' }}>Denegar</option>
-                                </select>
-                            </form>
+                            <x-audit-status-selector :status="$item->estado ?? 'pendiente'" :action="route('admin.cambiarEstado', $item->id_resultado)" />
                         </div>
                     </div>
                 @empty
@@ -262,23 +254,10 @@
                                         {{ $sc['label'] }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4">
-                                    <form action="{{ route('admin.cambiarEstado', $item->id_resultado) }}" method="POST" class="flex justify-end">
-                                        @csrf
-                                        <div class="relative inline-flex items-center">
-                                            <select name="estado" onchange="this.form.submit()"
-                                                    class="appearance-none text-xs font-semibold py-2 pl-4 pr-9 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 transition cursor-pointer shadow-sm">
-                                                <option value="pendiente" {{ ($item->estado ?? 'pendiente') == 'pendiente' ? 'selected' : '' }}>Revisar</option>
-                                                <option value="aprobado"  {{ ($item->estado ?? '') == 'aprobado'  ? 'selected' : '' }}>Aprobar</option>
-                                                <option value="rechazado" {{ ($item->estado ?? '') == 'rechazado' ? 'selected' : '' }}>Denegar</option>
-                                            </select>
-                                            <div class="absolute right-3 pointer-events-none text-gray-400">
-                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path d="M19 9l-7 7-7-7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                                </svg>
-                                            </div>
-                                        </div>
-                                    </form>
+                                 <td class="px-6 py-4">
+                                    <div class="flex justify-end">
+                                        <x-audit-status-selector :status="$item->estado ?? 'pendiente'" :action="route('admin.cambiarEstado', $item->id_resultado)" />
+                                    </div>
                                 </td>
                             </tr>
                         @empty
@@ -325,14 +304,14 @@
                 premiumTargetUser: '',
                 premiumTargetId: ''
              }"
-             class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
+             class="bg-white dark:bg-gray-800 rounded-2xl border-t-4 border-red-900 border-x border-b border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
 
             <div class="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-200 dark:border-gray-700">
                 <div class="flex items-center gap-3">
                     <div class="w-1.5 h-6 bg-red-600 rounded-full"></div>
                     <div>
-                        <h3 class="text-base font-bold text-gray-900 dark:text-white">Control de Usuarios</h3>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Gestión de roles y accesos del sistema</p>
+                        <h3 class="text-[10px] font-black text-gray-700 dark:text-gray-300 uppercase tracking-widest leading-none">Control de Usuarios</h3>
+                        <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-1 uppercase tracking-wider font-bold">Gestión de roles y accesos del sistema</p>
                     </div>
                 </div>
             </div>

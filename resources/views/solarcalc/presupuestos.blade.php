@@ -12,11 +12,11 @@
 
     <div class="py-8 sm:py-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-xl overflow-hidden p-5 sm:p-6 lg:p-8">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl border-t-4 border-amber-600 border-x border-b border-gray-200 dark:border-gray-700 shadow-xl overflow-hidden p-5 sm:p-6 lg:p-8">
                 <div class="flex items-center justify-between gap-4 mb-6 flex-wrap">
                     <div>
-                        <h3 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Simulaciones Guardadas</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Listado completo de tus análisis fotovoltaicos.</p>
+                        <h3 class="text-[10px] font-black text-gray-700 dark:text-gray-300 uppercase tracking-widest leading-none">Vigilancia de Presupuestos</h3>
+                        <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-1 uppercase tracking-wider font-bold">Listado completo de tus análisis fotovoltaicos</p>
                     </div>
                     <a href="{{ route('solar.calculadora') }}"
                        class="inline-flex items-center gap-2 py-2.5 px-5 rounded-xl bg-amber-600 text-white text-sm font-semibold hover:bg-amber-500 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
@@ -26,8 +26,8 @@
                 </div>
 
                 <div class="mb-6 grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    <div class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40 p-4">
-                        <p class="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 font-semibold">Estado de suscripción</p>
+                    <div class="rounded-2xl border-t-4 border-slate-400 border-x border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40 p-4">
+                        <p class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Estado de suscripción</p>
                         <div class="mt-2 flex items-center gap-2">
                             @if($currentPlan->code !== 'free')
                                 <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 text-xs font-bold uppercase">Premium</span>
@@ -42,8 +42,8 @@
                         </p>
                     </div>
 
-                    <div class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
-                        <p class="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 font-semibold mb-2">Herramientas premium</p>
+                    <div class="rounded-2xl border-t-4 border-amber-500 border-x border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
+                        <p class="text-[10px] font-black text-amber-500/70 dark:text-amber-500/40 uppercase tracking-widest mb-2">Herramientas premium</p>
                         @if($canCompare)
                             <form method="POST" action="{{ route('premium.compare') }}" class="space-y-2">
                                 @csrf
