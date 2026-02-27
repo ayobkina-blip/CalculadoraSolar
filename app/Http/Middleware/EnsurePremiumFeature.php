@@ -20,8 +20,9 @@ class EnsurePremiumFeature
 
         if (!$user || !$this->subscriptionAccess->hasFeature($user, $feature)) {
             return redirect()
-                ->route('premium.index', ['reason' => $feature])
-                ->with('premium_reason', $feature)
+                ->back()
+                ->with('show_premium_modal', true)
+                ->with('premium_modal_reason', $feature)
                 ->with('error', 'Esta función está disponible solo para cuentas Premium.');
         }
 

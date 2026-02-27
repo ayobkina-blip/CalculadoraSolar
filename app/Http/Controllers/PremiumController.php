@@ -7,14 +7,19 @@ use App\Models\SubscriptionPlan;
 use App\Services\SubscriptionAccessService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class PremiumController extends Controller
 {
-    public function index(Request $request, SubscriptionAccessService $subscriptionAccess): View
+    public function index(Request $request, SubscriptionAccessService $subscriptionAccess): RedirectResponse
     {
-        return view('solarcalc.premium', $this->buildViewData($request, $subscriptionAccess));
+        $reason = $request->query('reason', session('premium_reason'));
+
+        return redirect()
+            ->route('dashboard')
+            ->with('show_premium_modal', true)
+            ->with('premium_modal_reason', $reason);
     }
 
     public function compare(Request $request, SubscriptionAccessService $subscriptionAccess): View
@@ -45,7 +50,9 @@ class PremiumController extends Controller
             return $requestedIds->search($resultado->id_resultado);
         })->values();
 
-        return view('solarcalc.premium', $this->buildViewData($request, $subscriptionAccess, $ordered));
+        return view('solarcalc.premium', [
+            'comparisonResults' => $ordered,
+        ]);
     }
 
     public function exportCsv(Request $request): StreamedResponse
@@ -93,45 +100,5 @@ class PremiumController extends Controller
         }, $filename, [
             'Content-Type' => 'text/csv; charset=UTF-8',
         ]);
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private function buildViewData(
-        Request $request,
-        SubscriptionAccessService $subscriptionAccess,
-        ?Collection $comparisonResults = null
-    ): array {
-        $user = $request->user();
-        $currentPlan = $subscriptionAccess->getCurrentPlan($user);
-
-        $resultadosUsuario = Resultado::query()
-            ->select([
-                'id_resultado',
-                'ubicacion',
-                'potencia_instalacion_kwp',
-                'ahorro_estimado_eur',
-                'roi_anyos',
-                'created_at',
-            ])
-            ->where('usuario_fr', $user->id_usuario)
-            ->latest()
-            ->take(60)
-            ->get();
-
-        $planCatalog = $subscriptionAccess->getPlanCatalog();
-
-        return [
-            'currentPlan' => $currentPlan,
-            'planCatalog' => $planCatalog,
-            'reason' => $request->query('reason', session('premium_reason')),
-            'remainingSimulations' => $subscriptionAccess->remainingSimulations($user),
-            'isPremiumActive' => $subscriptionAccess->isPremiumActive($user),
-            'monthlyPlan' => $planCatalog->firstWhere('code', SubscriptionPlan::CODE_PREMIUM_MONTHLY),
-            'yearlyPlan' => $planCatalog->firstWhere('code', SubscriptionPlan::CODE_PREMIUM_YEARLY),
-            'userResultsForCompare' => $resultadosUsuario,
-            'comparisonResults' => $comparisonResults ?? collect(),
-        ];
     }
 }

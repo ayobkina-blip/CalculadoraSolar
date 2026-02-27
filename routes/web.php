@@ -6,6 +6,7 @@ use App\Http\Controllers\SolarController;
 use App\Http\Controllers\PremiumController;
 use App\Http\Controllers\AdminSubscriptionController;
 use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\SubscriptionController;
 use Illuminate\Support\Facades\Route;
 
 // --- Rutas Públicas ---
@@ -49,6 +50,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/premium/export/csv', [PremiumController::class, 'exportCsv'])
         ->middleware('premium.feature:csv_export')
         ->name('premium.export.csv');
+
+    // Autogestión de suscripción por el usuario
+    Route::get('/checkout/{planCode}', [SubscriptionController::class, 'checkout'])->name('subscription.checkout');
+    Route::post('/checkout/{planCode}', [SubscriptionController::class, 'subscribe'])->name('subscription.subscribe');
+    Route::delete('/subscription/cancel', [SubscriptionController::class, 'cancel'])->name('subscription.cancel');
 
     // 5. Panel de Administración (Solo para Rol = 1) - Protegido con middleware
     Route::prefix('admin')->middleware('admin')->group(function () {

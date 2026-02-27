@@ -44,30 +44,30 @@
         x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
-        class="fixed bottom-5 right-5 z-[100] max-w-sm w-full"
+        class="fixed bottom-5 right-5 z-[100] max-w-md w-full sm:max-w-lg"
     >
-        <div class="bg-gray-900/95 backdrop-blur-sm border {{ $style['border'] }} shadow-2xl rounded-2xl p-4 flex items-center gap-4">
+        <div class="bg-gray-900/95 backdrop-blur-sm border {{ $style['border'] }} shadow-2xl rounded-2xl p-5 sm:p-6 flex items-center gap-4">
             {{-- Icono Dinámico según tipo --}}
-            <div class="flex-shrink-0 w-10 h-10 {{ $style['bg'] }} rounded-xl flex items-center justify-center border {{ $style['border'] }}">
-                <svg class="w-6 h-6 {{ $style['icon'] }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex-shrink-0 w-12 h-12 {{ $style['bg'] }} rounded-xl flex items-center justify-center border {{ $style['border'] }}">
+                <svg class="w-7 h-7 {{ $style['icon'] }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="{{ $style['svg'] }}"></path>
                 </svg>
             </div>
 
-            <div class="flex-1">
-                <p class="text-[9px] font-black uppercase tracking-widest {{ $style['text'] }}">
+            <div class="flex-1 min-w-0">
+                <p class="text-xs sm:text-sm font-black uppercase tracking-wider {{ $style['text'] }}">
                     @if($type === 'success') Operación Exitosa
                     @elseif($type === 'error') Error del Sistema
                     @else Notificación
                     @endif
                 </p>
-                <p class="text-[11px] text-gray-200 font-medium mt-0.5 leading-relaxed">
+                <p class="text-sm sm:text-base text-gray-200 font-medium mt-1 leading-snug">
                     {{ $message }}
                 </p>
             </div>
 
-            <button @click="show = false" class="text-gray-500 hover:text-white transition-colors">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <button @click="show = false" class="flex-shrink-0 text-gray-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/10">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
             </button>

@@ -62,6 +62,34 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        // Plan mensual
+        SubscriptionPlan::updateOrCreate(
+            ['code' => 'premium_monthly'],
+            [
+                'name'             => 'Premium Mensual',
+                'price_cents'      => 999,   // 9,99 €
+                'currency'         => 'EUR',
+                'interval'         => 'month',
+                'simulation_limit' => null,  // ilimitado
+                'features'         => ['pdf_export', 'advanced_stats', 'result_compare', 'csv_export'],
+                'is_active'        => true,
+            ]
+        );
+
+        // Plan anual
+        SubscriptionPlan::updateOrCreate(
+            ['code' => 'premium_yearly'],
+            [
+                'name'             => 'Premium Anual',
+                'price_cents'      => 7999,  // 79,99 €
+                'currency'         => 'EUR',
+                'interval'         => 'year',
+                'simulation_limit' => null,
+                'features'         => ['pdf_export', 'advanced_stats', 'result_compare', 'csv_export'],
+                'is_active'        => true,
+            ]
+        );
+
         // Assign free subscriptions to demo users
         $usuarioDemo = User::where('email', 'usuario@solarcalc.com')->first();
         $premiumDemo = User::where('email', 'premium@solarcalc.com')->first();

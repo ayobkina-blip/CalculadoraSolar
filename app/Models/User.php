@@ -104,7 +104,7 @@ class User extends Authenticatable
             ->where(function ($query) {
                 $query->whereNull('ends_at')->orWhere('ends_at', '>=', now());
             })
-            ->latestOfMany('id');
+            ->latest('starts_at');
     }
 
     public function getAvatarUrl(): string

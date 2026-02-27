@@ -1,9 +1,19 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Resultados del Análisis') }}
-        </h2>
-    </x-slot>
+    <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
+            <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+        </div>
+        <div>
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white leading-tight">
+                Resultados del Análisis
+            </h2>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Revisa los detalles de tu simulación solar</p>
+        </div>
+    </div>
+</x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">

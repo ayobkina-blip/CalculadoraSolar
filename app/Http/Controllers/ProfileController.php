@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Services\SubscriptionAccessService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,6 +19,7 @@ class ProfileController extends Controller
     public function edit(Request $request): View
     {
         $user = $request->user();
+        $subscriptionAccess = app(SubscriptionAccessService::class);
 
         // Extraemos métricas del historial de cálculos del usuario
         // Usamos la relación presupuestos() definida en el Modelo User
@@ -30,6 +32,9 @@ class ProfileController extends Controller
             'user' => $user,
             'totalSimulaciones' => $simulaciones,
             'ahorroMedio' => round($ahorroMedio, 2),
+            'currentPlan' => $subscriptionAccess->getCurrentPlan($user),
+            'isPremiumActive' => $subscriptionAccess->isPremiumActive($user),
+            'activeSubscription' => $user->activeSubscription()->first(),
         ]);
     }
 

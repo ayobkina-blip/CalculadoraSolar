@@ -1,14 +1,18 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200 leading-tight flex items-center gap-3">
-            <div class="p-2 bg-amber-500/10 rounded-lg">
-                <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                    <circle cx="12" cy="12" r="3" stroke-width="2"/>
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-900/30 flex items-center justify-center">
+                <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
             </div>
-            {{ __('Centro de Identidad y Seguridad') }}
-        </h2>
+            <div>
+                <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white leading-tight">
+                    Mi Perfil
+                </h2>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Gestiona tu información personal y preferencias</p>
+            </div>
+        </div>
     </x-slot>
 
     <div class="py-6 sm:py-8 md:py-12 bg-slate-50 dark:bg-slate-950 min-h-screen">
@@ -83,6 +87,68 @@
                     <div class="bg-white dark:bg-slate-900 rounded-2xl md:rounded-[2.5rem] p-6 sm:p-8 md:p-10 border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:border-slate-300 dark:hover:border-slate-700">
                         @include('profile.partials.update-password-form')
                     </div>
+
+                    {{-- Gestión de Suscripción --}}
+                    <section class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 sm:p-8 shadow-sm">
+                        <h3 class="text-base font-bold text-gray-900 dark:text-white">Mi suscripción</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Gestiona tu plan activo.</p>
+
+                        <div class="mt-4 space-y-3 text-sm text-gray-600 dark:text-gray-300">
+                            <p><span class="font-semibold text-gray-900 dark:text-white">Plan actual:</span> {{ $currentPlan->name }}</p>
+
+                            @if($activeSubscription)
+                                <p><span class="font-semibold text-gray-900 dark:text-white">Renovación:</span>
+                                    {{ $activeSubscription->ends_at?->format('d/m/Y') ?? 'Sin fecha límite' }}
+                                </p>
+                                <p><span class="font-semibold text-gray-900 dark:text-white">Origen:</span>
+                                    {{ $activeSubscription->source === 'self_service' ? 'Contratado por ti' : 'Asignado por administrador' }}
+                                </p>
+                            @endif
+                        </div>
+
+                        @if($isPremiumActive && $activeSubscription?->source === 'self_service')
+                            <div x-data="{ confirming: false }" class="mt-5">
+                                <button type="button" @click="confirming = true"
+                                        class="text-sm font-semibold text-red-600 dark:text-red-400 hover:underline">
+                                    Cancelar suscripción
+                                </button>
+                                <div x-show="confirming" x-transition
+                                     class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+                                     @keydown.escape.window="confirming = false">
+                                    <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 max-w-sm w-full mx-4 shadow-xl">
+                                        <p class="font-semibold text-gray-900 dark:text-white">¿Cancelar tu suscripción?</p>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                            Perderás acceso a las funciones premium inmediatamente.
+                                        </p>
+                                        <div class="flex gap-3 mt-5">
+                                            <button @click="confirming = false"
+                                                    class="flex-1 py-2 rounded-xl border border-gray-300 dark:border-gray-600 text-sm font-semibold text-gray-700 dark:text-gray-300">
+                                                Volver
+                                            </button>
+                                            <form method="POST" action="{{ route('subscription.cancel') }}" class="flex-1">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                        class="w-full py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white text-sm font-semibold transition">
+                                                    Sí, cancelar
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @elseif($isPremiumActive)
+                            <p class="mt-4 text-xs text-gray-500 dark:text-gray-400">
+                                Tu plan fue asignado por un administrador. Contacta con soporte para cancelarlo.
+                            </p>
+                        @else
+                            <button type="button"
+                                    @click="window.dispatchEvent(new CustomEvent('open-premium-modal', { detail: { reason: 'simulation_quota' } }))"
+                                    class="mt-4 inline-flex items-center text-sm font-semibold text-amber-600 dark:text-amber-400 hover:underline">
+                                Ver planes disponibles →
+                            </button>
+                        @endif
+                    </section>
 
                     {{-- ZONA DE PELIGRO --}}
                     <div class="bg-rose-50/50 dark:bg-rose-950/10 rounded-2xl md:rounded-[2.5rem] border-2 border-dashed border-rose-200 dark:border-rose-900/30 overflow-hidden">

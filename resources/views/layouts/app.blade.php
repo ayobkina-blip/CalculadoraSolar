@@ -50,6 +50,31 @@
         </div>
 
         <x-toast />
+        
+        @auth
+            @php
+                $premiumModalData = [
+                    'showPremiumModal'   => session()->has('show_premium_modal'),
+                    'premiumModalReason' => session('premium_modal_reason'),
+                    'currentPlan'        => isset($currentPlan) ? $currentPlan : app(\App\Services\SubscriptionAccessService::class)->getCurrentPlan(auth()->user()),
+                    'isPremiumActive'    => app(\App\Services\SubscriptionAccessService::class)->isPremiumActive(auth()->user()),
+                    'remainingSimulations' => app(\App\Services\SubscriptionAccessService::class)->remainingSimulations(auth()->user()),
+                ];
+                $planCatalog = app(\App\Services\SubscriptionAccessService::class)->getPlanCatalog();
+                $premiumModalData['monthlyPlan'] = $planCatalog->firstWhere('code', \App\Models\SubscriptionPlan::CODE_PREMIUM_MONTHLY);
+                $premiumModalData['yearlyPlan']  = $planCatalog->firstWhere('code', \App\Models\SubscriptionPlan::CODE_PREMIUM_YEARLY);
+            @endphp
+            <x-premium-modal
+                :show-premium-modal="$premiumModalData['showPremiumModal']"
+                :premium-modal-reason="$premiumModalData['premiumModalReason']"
+                :current-plan="$premiumModalData['currentPlan']"
+                :is-premium-active="$premiumModalData['isPremiumActive']"
+                :remaining-simulations="$premiumModalData['remainingSimulations']"
+                :monthly-plan="$premiumModalData['monthlyPlan']"
+                :yearly-plan="$premiumModalData['yearlyPlan']"
+            />
+        @endauth
+        
         @stack('js')
     </body>
 </html>

@@ -1,13 +1,19 @@
 {{-- Prioridades 1-5 aplicadas: cards móvil + tabla sm+, mejoras visuales de filtros/tabla, estado vacío unificado y paginación/footer --}}
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-3">
-            <svg class="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-            </svg>
-            {{ __('Registro Histórico de Presupuestos') }}
-        </h2>
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                <svg class="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                </svg>
+            </div>
+            <div>
+                <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white leading-tight">
+                    Mis Simulaciones
+                </h2>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Historial completo de tus análisis solares</p>
+            </div>
+        </div>
     </x-slot>
 
     <div class="py-8 sm:py-10">
@@ -45,16 +51,28 @@
                     <div class="rounded-2xl border-t-4 border-amber-500 border-x border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
                         <p class="text-[10px] font-black text-amber-500/70 dark:text-amber-500/40 uppercase tracking-widest mb-2">Herramientas premium</p>
                         @if($canCompare)
+                            <div x-data="{ selected: [] }">
                             <form method="POST" action="{{ route('premium.compare') }}" class="space-y-2">
                                 @csrf
-                                <select name="resultados[]" multiple size="4" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                <select name="resultados[]" multiple size="4"
+                                        @change="selected = Array.from($event.target.selectedOptions).map(o => o.value)"
+                                        class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
                                     @foreach($presupuestos as $item)
                                         <option value="{{ $item->id_resultado }}">#{{ $item->id_resultado }} · {{ $item->ubicacion }} · {{ number_format($item->potencia_instalacion_kwp, 2) }} kWp</option>
                                     @endforeach
                                 </select>
+                                <p class="text-xs mt-1.5"
+                                   :class="selected.length >= 2 && selected.length <= 3
+                                       ? 'text-emerald-600 dark:text-emerald-400'
+                                       : 'text-gray-500 dark:text-gray-400'">
+                                    <span x-text="selected.length"></span> de 2–3 seleccionadas
+                                </p>
                                 <div class="flex gap-2">
-                                    <button type="submit" class="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-amber-600 text-white text-xs font-semibold hover:bg-amber-500 transition-all">
-                                        Comparar (2-3)
+                                    <button type="submit"
+                                            :disabled="selected.length < 2 || selected.length > 3"
+                                            :class="(selected.length < 2 || selected.length > 3) ? 'opacity-50 cursor-not-allowed' : ''"
+                                            class="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-amber-600 text-white text-xs font-semibold hover:bg-amber-500 transition-all">
+                                        Comparar simulaciones
                                     </button>
                                     @if($canExportCsv)
                                         <a href="{{ route('premium.export.csv') }}" class="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-slate-800 dark:bg-slate-100 dark:text-slate-900 text-white text-xs font-semibold hover:opacity-90 transition-all">
@@ -63,10 +81,13 @@
                                     @endif
                                 </div>
                             </form>
+                            </div>
                         @else
                             <div class="rounded-xl border border-dashed border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/20 p-3">
                                 <p class="text-xs text-amber-700 dark:text-amber-300 font-semibold">Comparador y CSV bloqueados en plan Free.</p>
-                                <a href="{{ route('premium.index', ['reason' => 'result_compare']) }}" class="inline-flex mt-2 px-3 py-2 rounded-lg bg-amber-600 text-white text-xs font-semibold hover:bg-amber-500 transition">Desbloquear Premium</a>
+                                <button type="button"
+                                    @click="window.dispatchEvent(new CustomEvent('open-premium-modal', { detail: { reason: 'result_compare' } }))"
+                                    class="inline-flex mt-2 px-3 py-2 rounded-lg bg-amber-600 text-white text-xs font-semibold hover:bg-amber-500 transition">Desbloquear Premium</button>
                             </div>
                         @endif
                     </div>
@@ -159,10 +180,11 @@
                                         PDF
                                     </a>
                                 @else
-                                    <a href="{{ route('premium.index', ['reason' => 'pdf_export']) }}"
+                                    <button type="button"
+                                       @click="window.dispatchEvent(new CustomEvent('open-premium-modal', { detail: { reason: 'pdf_export' } }))"
                                        class="flex-1 inline-flex items-center justify-center py-2.5 px-4 rounded-xl border border-amber-300 text-amber-700 dark:text-amber-300 text-sm font-semibold hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-amber-500">
                                         Premium PDF
-                                    </a>
+                                    </button>
                                 @endif
                             </div>
                         </article>
@@ -217,10 +239,11 @@
                                                             PDF
                                                         </a>
                                                     @else
-                                                        <a href="{{ route('premium.index', ['reason' => 'pdf_export']) }}"
+                                                        <button type="button"
+                                                           @click="window.dispatchEvent(new CustomEvent('open-premium-modal', { detail: { reason: 'pdf_export' } }))"
                                                            class="inline-flex items-center px-3 py-1.5 rounded-lg border border-amber-300 text-amber-700 dark:text-amber-300 text-xs font-semibold hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-all duration-200 ease-in-out">
                                                             Premium PDF
-                                                        </a>
+                                                        </button>
                                                     @endif
                                                 </div>
                                             </td>
