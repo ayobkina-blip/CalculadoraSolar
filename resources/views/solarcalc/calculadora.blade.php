@@ -76,36 +76,36 @@
     <form action="{{ route('solar.procesar') }}" method="POST">
         @csrf
 
-        <div class="flex flex-col lg:flex-row gap-6 lg:gap-8 items-stretch">
-            <div class="lg:flex-[3] flex-1 min-w-0 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden flex flex-col min-h-[560px] lg:min-h-[720px]">
-                <div class="px-5 sm:px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between gap-3 shrink-0">
+        <div class="flex flex-col lg:flex-row gap-4 lg:gap-8 items-stretch">
+            <div class="lg:flex-[3] flex-1 min-w-0 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden flex flex-col min-h-[500px] sm:min-h-[560px] lg:min-h-[720px]">
+                <div class="px-4 sm:px-5 lg:px-6 py-3 sm:py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between gap-2 sm:gap-3 shrink-0">
                     <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
-                            <svg class="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                             </svg>
                         </div>
                         <div>
-                            <p class="text-xs font-black uppercase tracking-widest text-gray-700 dark:text-gray-300">Ubicación</p>
-                            <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5 font-medium">Selecciona tu zona de instalación</p>
+                            <p class="text-xs sm:text-[10px] font-black uppercase tracking-widest text-gray-700 dark:text-gray-300">Ubicación</p>
+                            <p class="text-[10px] sm:text-[9px] text-gray-400 dark:text-gray-500 mt-0.5 font-medium">Selecciona tu zona de instalación</p>
                         </div>
                     </div>
-                    <span class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/50 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                    <span class="hidden sm:inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/50 text-[9px] sm:text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                         Mapa activo
                     </span>
                 </div>
 
-                <div class="px-5 sm:px-6 pt-4 pb-3 shrink-0 border-b border-gray-100 dark:border-gray-700/50">
+                <div class="px-4 sm:px-5 lg:px-6 pt-3 sm:pt-4 pb-2 sm:pb-3 shrink-0 border-b border-gray-100 dark:border-gray-700/50">
                     <div class="relative" id="search-wrapper">
                         <input type="text" id="buscador-direccion" autocomplete="off"
                                placeholder="Busca tu ciudad o dirección en España..."
-                               class="w-full rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/60 px-4 py-3 pl-10 pr-10 text-sm text-gray-800 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent focus:bg-white dark:focus:bg-gray-900 transition">
-                        <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                               class="w-full rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/60 px-3 sm:px-4 py-2.5 sm:py-3 pl-9 sm:pl-10 pr-9 sm:pr-10 text-sm text-gray-800 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent focus:bg-white dark:focus:bg-gray-900 transition">
+                        <svg class="absolute left-3 sm:left-3.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                         </svg>
-                        <svg id="search-spinner" class="hidden absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-amber-500 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <svg id="search-spinner" class="hidden absolute right-3 sm:right-3.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-500 animate-spin" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
                         </svg>
@@ -124,10 +124,10 @@
                     </div>
                 </div>
 
-                <div class="map-container mx-5 sm:mx-6 my-4 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 shrink-0 lg:flex-1">
+                <div class="map-container mx-4 sm:mx-5 lg:mx-6 my-3 sm:my-4 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 shrink-0 lg:flex-1">
                     <div id="main-map" style="width:100%;height:100%;"></div>
                     <div class="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
-                        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-900/75 backdrop-blur-sm text-white text-[10px] font-medium whitespace-nowrap">
+                        <div class="flex items-center gap-1 px-2 py-1.5 rounded-lg bg-gray-900/75 backdrop-blur-sm text-white text-[9px] sm:text-[10px] font-medium whitespace-nowrap">
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5"/>
                             </svg>
@@ -144,33 +144,33 @@
             <div class="w-full lg:w-[400px] xl:w-[420px] bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col"
                  x-data="{ consumo: {{ old('consumo', 350) }}, superficie: {{ old('superficie', 40) }} }">
 
-                <div class="px-5 sm:px-6 py-4 border-b border-gray-100 dark:border-gray-700 shrink-0">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                            <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="px-4 sm:px-5 lg:px-6 py-3 sm:py-4 border-b border-gray-100 dark:border-gray-700 shrink-0">
+                    <div class="flex items-center gap-2 sm:gap-3">
+                        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                             </svg>
                         </div>
                         <div>
-                            <p class="text-xs font-black uppercase tracking-widest text-gray-700 dark:text-gray-300">Parámetros técnicos</p>
-                            <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5 font-medium">Ajusta los datos de tu instalación</p>
+                            <p class="text-xs sm:text-[10px] font-black uppercase tracking-widest text-gray-700 dark:text-gray-300">Parámetros técnicos</p>
+                            <p class="text-[10px] sm:text-[9px] text-gray-400 dark:text-gray-500 mt-0.5 font-medium">Ajusta los datos de tu instalación</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="flex-1 px-5 sm:px-6 py-5 space-y-5 overflow-y-auto">
-                    <div class="rounded-xl bg-gray-50 dark:bg-gray-900/40 border border-gray-100 dark:border-gray-700/60 p-4">
-                        <div class="flex items-center justify-between mb-3">
-                            <div class="flex items-center gap-2">
-                                <div class="w-6 h-6 rounded-lg bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center">
-                                    <svg class="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="flex-1 px-4 sm:px-5 lg:px-6 py-4 sm:py-5 space-y-4 sm:space-y-5 overflow-y-auto">
+                    <div class="rounded-xl bg-gray-50 dark:bg-gray-900/40 border border-gray-100 dark:border-gray-700/60 p-3 sm:p-4">
+                        <div class="flex items-center justify-between mb-2.5 sm:mb-3">
+                            <div class="flex items-center gap-1.5 sm:gap-2">
+                                <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center">
+                                    <svg class="w-3 sm:w-3.5 h-3 sm:h-3.5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                                     </svg>
                                 </div>
                                 <label for="input-consumo" class="text-sm font-semibold text-gray-700 dark:text-gray-300">Consumo mensual</label>
                             </div>
-                            <span class="px-2.5 py-1 rounded-lg bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 text-xs font-black"
+                            <span class="px-2 py-1 rounded-lg bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 text-xs font-black"
                                   x-text="consumo + ' kWh'"></span>
                         </div>
                         <input type="range" x-model="consumo" min="50" max="2500" step="10"
@@ -262,12 +262,37 @@
     </form>
 
     @push('styles')
-        <link href="https://unpkg.com/maplibre-gl@4.1.3/dist/maplibre-gl.css" rel="stylesheet">
-        <script src="https://unpkg.com/maplibre-gl@4.1.3/dist/maplibre-gl.js"></script>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
         <style>
-            #main-map { position: absolute; inset: 0; width: 100%; height: 100%; }
-            .map-container { position: relative; height: 420px; }
-            @media (min-width: 1024px) { .map-container { height: 100%; min-height: 480px; } }
+            #main-map { 
+                position: absolute; 
+                inset: 0; 
+                width: 100%; 
+                height: 100%; 
+                background: #f3f4f6;
+                border-radius: 0.75rem;
+                z-index: 1;
+            }
+            .map-container { 
+                position: relative; 
+                height: 350px;
+                min-height: 300px;
+                background: #f3f4f6;
+                border-radius: 0.75rem;
+                overflow: hidden;
+            }
+            @media (min-width: 640px) { 
+                .map-container { 
+                    height: 420px; 
+                } 
+            }
+            @media (min-width: 1024px) { 
+                .map-container { 
+                    height: 100%; 
+                    min-height: 480px; 
+                } 
+            }
 
             input[type=number]::-webkit-inner-spin-button,
             input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
@@ -283,9 +308,13 @@
                 background: #f59e0b; border: 3px solid #fff; cursor: pointer;
             }
 
-            .maplibregl-ctrl-bottom-left,
-            .maplibregl-ctrl-bottom-right { display: none !important; }
-            .maplibregl-canvas { outline: none !important; }
+            /* Responsive adjustments */
+            @media (max-width: 639px) {
+                .map-container {
+                    height: 280px;
+                    min-height: 250px;
+                }
+            }
         </style>
     @endpush
 
@@ -303,8 +332,11 @@
                 const coordsBox   = document.getElementById('coords-indicator');
                 const coordsText  = document.getElementById('coords-text');
                 const feedback    = document.getElementById('search-feedback');
+                const mapContainer = document.getElementById('main-map');
 
-                if (!latInput || !searchInput || !dropdown) return;
+                if (!latInput || !searchInput || !dropdown || !mapContainer) {
+                    return;
+                }
 
                 const initLat = parseFloat(latInput.value)  || 39.1867;
                 const initLon = parseFloat(lngInput.value)  || -0.4367;
@@ -312,36 +344,62 @@
                 let map = null;
                 let marker = null;
                 try {
-                    if (typeof maplibregl !== 'undefined') {
-                        map = new maplibregl.Map({
-                            container: 'main-map',
-                            style: {
-                                version: 8,
-                                sources: {
-                                    carto: {
-                                        type: 'raster',
-                                        tiles: ['https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'],
-                                        tileSize: 256,
-                                        attribution: '© CartoDB'
-                                    }
-                                },
-                                layers: [{ id: 'carto-layer', type: 'raster', source: 'carto' }]
-                            },
-                            center: [initLon, initLat],
-                            zoom: 13,
-                            trackResize: true
+                    if (typeof L !== 'undefined') {
+                        // Initialize the map
+                        map = L.map('main-map').setView([initLat, initLon], 13);
+                        
+                        // Add OpenStreetMap tiles
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            attribution: '© OpenStreetMap contributors',
+                            maxZoom: 19
+                        }).addTo(map);
+                        
+                        // Add a custom marker
+                        const customIcon = L.divIcon({
+                            html: '<div style="background:#f59e0b;width:20px;height:20px;border-radius:50%;border:3px solid white;box-shadow:0 2px 6px rgba(245,158,11,0.4);"></div>',
+                            iconSize: [20, 20],
+                            iconAnchor: [10, 10],
+                            className: 'custom-marker'
                         });
-
-                        marker = new maplibregl.Marker({ draggable: true, color: '#f59e0b' })
-                            .setLngLat([initLon, initLat])
-                            .addTo(map);
-                    } else {
-                        console.warn('[SolarCalc] MapLibre no disponible.');
+                        
+                        marker = L.marker([initLat, initLon], { 
+                            icon: customIcon,
+                            draggable: true 
+                        }).addTo(map);
+                        
+                        // Handle marker drag
+                        marker.on('dragend', function(e) {
+                            const pos = e.target.getLatLng();
+                            updateCoords(pos.lng, pos.lat);
+                            setFeedback('Coordenadas actualizadas desde el marcador.');
+                        });
+                        
+                        // Handle map click
+                        map.on('click', function(e) {
+                            marker.setLatLng(e.latlng);
+                            updateCoords(e.latlng.lng, e.latlng.lat);
+                            setFeedback('Coordenadas actualizadas desde el mapa.');
+                        });
                     }
                 } catch (err) {
-                    console.warn('[SolarCalc] Error inicializando mapa:', err.message);
                     map = null;
                     marker = null;
+                    
+                    // Fallback: mostrar mapa estático
+                    const mapContainer = document.getElementById('main-map');
+                    if (mapContainer) {
+                        mapContainer.innerHTML = `
+                            <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f3f4f6;border-radius:0.75rem;">
+                                <div style="text-align:center;padding:20px;">
+                                    <svg style="width:48px;height:48px;margin:0 auto 16px;color:#9ca3af;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                                    </svg>
+                                    <p style="color:#6b7280;font-size:14px;margin:0;">Mapa no disponible</p>
+                                    <p style="color:#9ca3af;font-size:12px;margin:8px 0 0;">Usa el buscador de arriba para seleccionar ubicación</p>
+                                </div>
+                            </div>
+                        `;
+                    }
                 }
 
                 function updateCoords(lng, lat) {
@@ -418,10 +476,10 @@
                     if (isNaN(lat) || isNaN(lon)) return;
 
                     if (map) {
-                        map.flyTo({ center: [lon, lat], zoom: 15, duration: 900 });
+                        map.setView([lat, lon], 15);
                     }
                     if (marker) {
-                        marker.setLngLat([lon, lat]);
+                        marker.setLatLng([lat, lon]);
                     }
                     updateCoords(lon, lat);
 
@@ -449,23 +507,6 @@
                     searchInput.value = shortName;
                     hideDropdown();
                     setFeedback('Ubicación aplicada al formulario.');
-                }
-
-                if (map && marker) {
-                    marker.on('dragend', function () {
-                        const p = marker.getLngLat();
-                        updateCoords(p.lng, p.lat);
-                        setFeedback('Coordenadas actualizadas desde el marcador.');
-                    });
-
-                    map.on('click', function (e) {
-                        marker.setLngLat(e.lngLat);
-                        updateCoords(e.lngLat.lng, e.lngLat.lat);
-                        setFeedback('Coordenadas actualizadas desde el mapa.');
-                    });
-
-                    map.on('load', function () { map.resize(); });
-                    window.addEventListener('resize', function () { map.resize(); });
                 }
 
                 var debounce = null;
@@ -503,7 +544,6 @@
                         if (err.name === 'AbortError') return;
                         hideDropdown();
                         setFeedback('No se pudo buscar ahora. Inténtalo de nuevo.', true);
-                        console.warn('[SolarCalc] Nominatim:', err.message);
                     });
                 }
 
@@ -550,10 +590,9 @@
             }
 
             function tryInit() {
-                if (typeof maplibregl !== 'undefined') {
+                if (typeof L !== 'undefined') {
                     init();
                 } else {
-                    console.warn('[SolarCalc] MapLibre no disponible, modo sin mapa.');
                     init();
                 }
             }

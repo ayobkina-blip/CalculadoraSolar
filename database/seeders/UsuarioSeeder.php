@@ -13,22 +13,26 @@ class UsuarioSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. CREAR ADMINISTRADOR
-        \App\Models\User::create([
-            'nombre'   => 'Admin SolarCalc', // CAMBIADO: 'name' -> 'nombre'
-            'email'    => 'admin@solarcalc.com',
-            'contrasena_hash' => \Illuminate\Support\Facades\Hash::make('admin1234'),
-            'rol'      => 1,
-            'avatar'   => null,
-        ]);
+        // 1. CREAR 2 ADMINISTRADORES
+        for ($i = 1; $i <= 2; $i++) {
+            \App\Models\User::create([
+                'nombre'   => "Admin {$i}",
+                'email'    => "admin{$i}@solarcalc.com",
+                'contrasena_hash' => \Illuminate\Support\Facades\Hash::make('password'),
+                'rol'      => 1,
+                'avatar'   => null,
+            ]);
+        }
 
-        // 2. CREAR USUARIO NORMAL
-        \App\Models\User::create([
-            'nombre'   => 'Usuario Demo', // CAMBIADO: 'name' -> 'nombre'
-            'email'    => 'user@solarcalc.com',
-            'contrasena_hash' => \Illuminate\Support\Facades\Hash::make('user1234'),
-            'rol'      => 0,
-            'avatar'   => null,
-        ]);
+        // 2. CREAR 10 USUARIOS NORMALES
+        for ($i = 1; $i <= 10; $i++) {
+            \App\Models\User::create([
+                'nombre'   => "Usuario {$i}",
+                'email'    => "usuario{$i}@solarcalc.com",
+                'contrasena_hash' => \Illuminate\Support\Facades\Hash::make('password'),
+                'rol'      => 0,
+                'avatar'   => null,
+            ]);
+        }
     }
 }

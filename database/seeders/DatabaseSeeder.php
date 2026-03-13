@@ -7,6 +7,7 @@ use App\Models\SubscriptionPlan;
 use App\Models\UserSubscription;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -17,36 +18,31 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create users
-        User::updateOrCreate(
-            ['email' => 'admin@solarcalc.com'],
-            [
-                'nombre' => 'Admin',
-                'contrasena_hash' => 'password',
-                'rol' => 1,
-                'email_verified_at' => now(),
-            ]
-        );
+        // Create 2 admin users
+        for ($i = 1; $i <= 2; $i++) {
+            User::updateOrCreate(
+                ['email' => "admin{$i}@solarcalc.com"],
+                [
+                    'nombre' => "Admin {$i}",
+                    'contrasena_hash' => Hash::make('password'),
+                    'rol' => 1,
+                    'email_verified_at' => now(),
+                ]
+            );
+        }
 
-        User::updateOrCreate(
-            ['email' => 'usuario@solarcalc.com'],
-            [
-                'nombre' => 'Usuario Demo',
-                'contrasena_hash' => 'password',
-                'rol' => 0,
-                'email_verified_at' => now(),
-            ]
-        );
-
-        User::updateOrCreate(
-            ['email' => 'premium@solarcalc.com'],
-            [
-                'nombre' => 'Premium Demo',
-                'contrasena_hash' => 'password',
-                'rol' => 0,
-                'email_verified_at' => now(),
-            ]
-        );
+        // Create 10 normal users
+        for ($i = 1; $i <= 10; $i++) {
+            User::updateOrCreate(
+                ['email' => "usuario{$i}@solarcalc.com"],
+                [
+                    'nombre' => "Usuario {$i}",
+                    'contrasena_hash' => Hash::make('password'),
+                    'rol' => 0,
+                    'email_verified_at' => now(),
+                ]
+            );
+        }
 
         // Ensure free plan exists
         $freePlan = SubscriptionPlan::firstOrCreate(
@@ -90,28 +86,19 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // Assign free subscriptions to demo users
-        $usuarioDemo = User::where('email', 'usuario@solarcalc.com')->first();
-        $premiumDemo = User::where('email', 'premium@solarcalc.com')->first();
-
-        if ($usuarioDemo) {
-            UserSubscription::updateOrCreate(
-                ['usuario_fr' => $usuarioDemo->id_usuario, 'status' => 'active'],
-                [
-                    'plan_fr' => $freePlan->id,
-                    'starts_at' => now(),
-                ]
-            );
-        }
-
-        if ($premiumDemo) {
-            UserSubscription::updateOrCreate(
-                ['usuario_fr' => $premiumDemo->id_usuario, 'status' => 'active'],
-                [
-                    'plan_fr' => $freePlan->id,
-                    'starts_at' => now(),
-                ]
-            );
+        // Assign free subscriptions to all normal users
+        for ($i = 1; $i <= 10; $i++) {
+            $usuario = User::where('email', "usuario{$i}@solarcalc.com")->first();
+            
+            if ($usuario) {
+                UserSubscription::updateOrCreate(
+                    ['usuario_fr' => $usuario->id_usuario, 'status' => 'active'],
+                    [
+                        'plan_fr' => $freePlan->id,
+                        'starts_at' => now(),
+                    ]
+                );
+            }
         }
     }
 }
